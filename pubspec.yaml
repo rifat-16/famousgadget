@@ -34,3 +34,9 @@ flutter:
 assets:
   -assets/images
 
+fonts:
+  - family: Geist
+    fonts:
+      - asset: assets/fonts/Geist-Regular.ttf
+      - asset: assets/fonts/Geist-SemiBold.ttf
+        weight: 600

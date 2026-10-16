@@ -18,16 +18,16 @@ abstract final class AppTextStyles {
   );
 
   /// Geist UI Semibold - Geist / 16px / SemiBold
-  static TextStyle get uiSemiBold => GoogleFonts.getFont(
-    'Geist',
+  static TextStyle get uiSemiBold => const TextStyle(
+    fontFamily: 'Geist',
     fontSize: 16.0,
     fontWeight: FontWeight.w600,
     color: AppColors.navyDark,
   );
 
   /// Geist Body regular - Geist / 14px / Regular / line-height 1.5
-  static TextStyle get bodyRegular => GoogleFonts.getFont(
-    'Geist',
+  static TextStyle get bodyRegular => const TextStyle(
+    fontFamily: 'Geist',
     fontSize: 14.0,
     fontWeight: FontWeight.w400,
     height: 1.5,
@@ -45,8 +45,8 @@ abstract final class AppTextStyles {
   );
 
   /// Status tags bg
-  static TextStyle get statusTagText => GoogleFonts.getFont(
-    'Geist',
+  static TextStyle get statusTagText => const TextStyle (
+    fontFamily: 'Geist',
     fontSize: 12.0,
     fontWeight: FontWeight.w600,
   );
@@ -65,8 +65,8 @@ abstract final class AppTextStyles {
   );
 
   /// Old Price Strikethrough text
-  static TextStyle get oldPriceText => GoogleFonts.getFont(
-    'Geist',
+  static TextStyle get oldPriceText => const TextStyle(
+    fontFamily: 'Geist',
     fontSize: 12.0,
     fontWeight: FontWeight.w400,
     color: AppColors.textDisabled,
