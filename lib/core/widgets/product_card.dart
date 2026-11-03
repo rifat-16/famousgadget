@@ -46,7 +46,7 @@ class ProductCard extends StatelessWidget {
             Stack(
               children: [
                 Container(
-                  height: 98.0,
+                  height: 130.0,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: AppColors.pageBackground,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/cart_controller.dart';
-import '../../controllers/home_controller.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/widgets/product_card.dart';
+import '../../data/mock_database.dart';
 import '../../models/product_model.dart';
 import '../../routes/app_routes.dart';
 
@@ -24,12 +24,7 @@ class _SearchViewState extends State<SearchView> {
   @override
   void initState() {
     super.initState();
-    final HomeController homeController = Get.find<HomeController>();
-    _allProducts = {
-      ...homeController.featuredProducts,
-      ...homeController.bestSellers,
-      ...homeController.hotDeals,
-    }.toList();
+    _allProducts = MockDatabase.products;
     _results.assignAll(_allProducts);
   }
 
@@ -37,11 +32,7 @@ class _SearchViewState extends State<SearchView> {
     if (query.trim().isEmpty) {
       _results.assignAll(_allProducts);
     } else {
-      _results.assignAll(
-        _allProducts.where((p) =>
-            p.title.toLowerCase().contains(query.toLowerCase()) ||
-            p.category.toLowerCase().contains(query.toLowerCase())),
-      );
+      _results.assignAll(MockDatabase.searchProducts(query));
     }
   }
 

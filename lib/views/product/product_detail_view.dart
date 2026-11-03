@@ -56,7 +56,7 @@ class ProductDetailView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Image Carousel
+                // 1. Image Carousel (Interactive Swipeable)
                 Container(
                   height: 280.0,
                   width: double.infinity,
@@ -64,45 +64,45 @@ class ProductDetailView extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Image.network(
-                        product.imageUrl,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.devices, size: 80, color: AppColors.textMuted),
+                      PageView.builder(
+                        itemCount: product.galleryImages.length,
+                        onPageChanged: controller.setImageIndex,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(AppSpacing.s16),
+                            child: Image.network(
+                              product.galleryImages[index],
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.devices, size: 80, color: AppColors.textMuted),
+                            ),
+                          );
+                        },
                       ),
-                      Positioned(
-                        bottom: AppSpacing.s16,
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 16,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryOrange,
-                                borderRadius: BorderRadius.circular(3),
+                      if (product.galleryImages.length > 1)
+                        Positioned(
+                          bottom: AppSpacing.s16,
+                          child: Obx(
+                            () => Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(
+                                product.galleryImages.length,
+                                (index) => AnimatedContainer(
+                                  duration: const Duration(milliseconds: 250),
+                                  margin: const EdgeInsets.symmetric(horizontal: 2.0),
+                                  width: controller.currentImageIndex.value == index ? 18.0 : 6.0,
+                                  height: 6.0,
+                                  decoration: BoxDecoration(
+                                    color: controller.currentImageIndex.value == index
+                                        ? AppColors.primaryOrange
+                                        : AppColors.borderLight,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: AppColors.borderLight,
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: AppColors.borderLight,
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),

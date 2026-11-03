@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../core/constants/app_assets.dart';
 import '../../core/theme/app_colors.dart';
@@ -14,16 +15,60 @@ class SplashView extends StatefulWidget {
 }
 
 class _SplashViewState extends State<SplashView> {
+  double _progress = 0.0;
+  Timer? _delayTimer;
+  Timer? _stepTimer;
+  bool _isNavigated = false;
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 2200), () {
-      Get.offAllNamed(AppRoutes.mainNav);
+    _startLoading();
+  }
+
+  void _startLoading() {
+    _delayTimer?.cancel();
+    _stepTimer?.cancel();
+
+    // Smooth single-run timer from 0% to 100%
+    _delayTimer = Timer(const Duration(milliseconds: 250), () {
+      if (!mounted || _isNavigated) return;
+
+      const int totalSteps = 100;
+      const Duration stepDuration = Duration(milliseconds: 32);
+      int currentStep = 0;
+
+      _stepTimer = Timer.periodic(stepDuration, (timer) {
+        if (!mounted || _isNavigated) {
+          timer.cancel();
+          return;
+        }
+
+        currentStep++;
+        setState(() {
+          _progress = currentStep / totalSteps;
+        });
+
+        if (currentStep >= totalSteps) {
+          timer.cancel();
+          _isNavigated = true;
+          Get.offAllNamed(AppRoutes.mainNav);
+        }
+      });
     });
   }
 
   @override
+  void dispose() {
+    _delayTimer?.cancel();
+    _stepTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final percentage = (_progress * 100).toInt().clamp(0, 100);
+
     return Scaffold(
       backgroundColor: AppColors.navyDark,
       body: SafeArea(
@@ -31,36 +76,15 @@ class _SplashViewState extends State<SplashView> {
           children: [
             const Spacer(),
 
-            // Splash Center
+            // Splash Center: Logo and Tagline
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset(
-                    AppAssets.logo,
-                    height: 52,
+                  SvgPicture.asset(
+                    AppAssets.logoWhite,
+                    height: 48.0,
                     fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.bolt_rounded,
-                            color: AppColors.primaryOrange,
-                            size: 36,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'FAMOUS GADGET',
-                            style: AppTextStyles.h2ProductTitle.copyWith(
-                              color: AppColors.cardWhite,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
                   ),
                   const SizedBox(height: 24),
                   Text(
@@ -78,32 +102,56 @@ class _SplashViewState extends State<SplashView> {
 
             const Spacer(),
 
-            // Splash Bottom
+            // Splash Bottom: Progress Bar and Version Info
             Column(
               children: [
+                // Progress Bar Container
                 Container(
-                  width: 120,
-                  height: 4,
+                  width: 150,
+                  height: 6,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.13),
-                    borderRadius: BorderRadius.circular(2),
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(3),
                   ),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      width: 44,
+                      width: 150 * _progress,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryOrange,
-                        borderRadius: BorderRadius.circular(2),
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(3),
+                        boxShadow: [
+                          if (_progress > 0.02)
+                            BoxShadow(
+                              color: AppColors.primaryOrange.withValues(alpha: 0.7),
+                              blurRadius: 8,
+                              offset: const Offset(0, 1),
+                            ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
+
+                // Live Percentage Display
+                Text(
+                  '$percentage%',
+                  style: AppTextStyles.small.copyWith(
+                    color: percentage == 100
+                        ? AppColors.primaryOrange
+                        : AppColors.textMuted,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 14),
                 Text(
                   'Version 4.2.1',
                   style: AppTextStyles.small.copyWith(
-                    color: AppColors.textMuted,
+                    color: AppColors.textMuted.withValues(alpha: 0.6),
+                    fontSize: 11,
                   ),
                 ),
                 const SizedBox(height: 24),

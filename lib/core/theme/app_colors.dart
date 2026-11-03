@@ -19,6 +19,18 @@ abstract final class AppColors {
     colors: [navyDark, primaryOrange],
   );
 
+  static const LinearGradient promoOrangeGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [primaryOrange, Color(0xFFFFA100)],
+  );
+
+  static const LinearGradient promoDarkGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [navyDark, Color(0xFF1D2C40)],
+  );
+
   // Surface & Backgrounds
   static const Color pageBackground = Color(0xFFF3F5FA); // App-wide scaffold background
   static const Color cardWhite = Color(0xFFFFFFFF);     // Product & item cards

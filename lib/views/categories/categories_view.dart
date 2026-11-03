@@ -47,7 +47,7 @@ class CategoriesView extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: AppSpacing.s12,
                   mainAxisSpacing: AppSpacing.s12,
-                  childAspectRatio: 1.15,
+                  childAspectRatio: 0.90,
                 ),
                 itemBuilder: (context, index) {
                   final category = homeController.categories[index];
@@ -73,24 +73,61 @@ class CategoriesView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.all(AppSpacing.s16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.s12,
+                        vertical: AppSpacing.s14,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 48.0,
-                            height: 48.0,
+                            width: 60.0,
+                            height: 60.0,
                             decoration: BoxDecoration(
                               color: AppColors.softPeach,
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Icon(
-                              _getCategoryIcon(category.icon),
-                              size: 26.0,
-                              color: AppColors.primaryOrange,
-                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: category.imageUrl != null
+                                ? Image.network(
+                                    category.imageUrl!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        Icon(
+                                      _getCategoryIcon(category.icon),
+                                      size: 30.0,
+                                      color: AppColors.primaryOrange,
+                                    ),
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: AppColors.primaryOrange,
+                                            value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Icon(
+                                    _getCategoryIcon(category.icon),
+                                    size: 30.0,
+                                    color: AppColors.primaryOrange,
+                                  ),
                           ),
-                          const SizedBox(height: AppSpacing.s12),
+                          const SizedBox(height: AppSpacing.s8),
                           Text(
                             category.name,
                             maxLines: 1,
@@ -101,7 +138,7 @@ class CategoriesView extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.s4),
+                          const SizedBox(height: AppSpacing.s2),
                           Text(
                             '${category.itemCount} items',
                             style: AppTextStyles.small.copyWith(
@@ -137,6 +174,8 @@ class CategoriesView extends StatelessWidget {
         return Icons.router_rounded;
       case 'tablet_mac':
         return Icons.tablet_mac_rounded;
+      case 'phone_android':
+        return Icons.phone_android_rounded;
       default:
         return Icons.devices_other_rounded;
     }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/cart_controller.dart';
-import '../../controllers/home_controller.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/widgets/product_card.dart';
+import '../../data/mock_database.dart';
 import '../../models/product_model.dart';
 import '../../routes/app_routes.dart';
 
@@ -15,25 +15,18 @@ class ProductListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String title = Get.arguments as String? ?? 'Products';
-    final HomeController homeController = Get.find<HomeController>();
     final CartController cartController = Get.find<CartController>();
 
-    // Filter or aggregate products based on argument
-    final List<ProductModel> allProducts = [
-      ...homeController.featuredProducts,
-      ...homeController.bestSellers,
-      ...homeController.hotDeals,
-    ];
-
-    final List<ProductModel> filtered = allProducts
-        .where((p) =>
-            title == 'Products' ||
-            title == 'Featured Products' ||
-            title == 'Best Sellers' ||
-            title == 'Hot Deals' ||
-            p.category.toLowerCase().contains(title.toLowerCase()))
-        .toSet()
-        .toList();
+    // Retrieve products directly from MockDatabase based on section or category
+    final List<ProductModel> filtered = title == 'Products'
+        ? MockDatabase.products
+        : title == 'Featured Products'
+            ? MockDatabase.featuredProducts
+            : title == 'Best Sellers'
+                ? MockDatabase.bestSellers
+                : title == 'Hot Deals'
+                    ? MockDatabase.hotDeals
+                    : MockDatabase.getProductsByCategory(title);
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,

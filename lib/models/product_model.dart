@@ -3,6 +3,7 @@ class ProductModel {
   final String title;
   final String description;
   final String imageUrl;
+  final List<String> images;
   final double price;
   final double? oldPrice;
   final double rating;
@@ -18,6 +19,7 @@ class ProductModel {
     required this.title,
     required this.description,
     required this.imageUrl,
+    this.images = const [],
     required this.price,
     this.oldPrice,
     this.rating = 4.8,
@@ -28,6 +30,9 @@ class ProductModel {
     this.colors = const [],
     this.specifications = const {},
   });
+
+  List<String> get galleryImages =>
+      images.isNotEmpty ? images : [imageUrl];
 
   String get formattedPrice => '৳${price.toStringAsFixed(0)}';
   String? get formattedOldPrice =>

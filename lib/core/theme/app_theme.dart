@@ -25,7 +25,7 @@ abstract final class AppTheme {
         backgroundColor: AppColors.cardWhite,
         elevation: 0,
         scrolledUnderElevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         iconTheme: const IconThemeData(color: AppColors.navyDark),
         titleTextStyle: AppTextStyles.h3Section,
       ),

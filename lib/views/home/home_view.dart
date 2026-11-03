@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/home_controller.dart';
 import '../../controllers/nav_controller.dart';
@@ -25,35 +27,11 @@ class HomeView extends StatelessWidget {
         backgroundColor: AppColors.cardWhite,
         elevation: 0,
         scrolledUnderElevation: 0,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 60.0,
         titleSpacing: AppSpacing.s16,
-        title: Row(
-          children: [
-            Image.asset(
-              AppAssets.logo,
-              height: 28,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Row(
-                  children: [
-                    const Icon(
-                      Icons.bolt_rounded,
-                      color: AppColors.primaryOrange,
-                      size: 26,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'FAMOUS GADGET',
-                      style: AppTextStyles.h3Section.copyWith(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
+        title: _buildAppBarLogo(),
         actions: [
           _buildCircleAction(
             icon: Icons.search_rounded,
@@ -240,11 +218,37 @@ class HomeView extends StatelessWidget {
                                 color: AppColors.softPeach,
                                 borderRadius: BorderRadius.circular(28),
                               ),
-                              child: Icon(
-                                _getCategoryIcon(category.icon),
-                                size: 26.0,
-                                color: AppColors.primaryOrange,
-                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: category.imageUrl != null
+                                  ? Image.network(
+                                      category.imageUrl!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) => Icon(
+                                        _getCategoryIcon(category.icon),
+                                        size: 26.0,
+                                        color: AppColors.primaryOrange,
+                                      ),
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
+                                        return Center(
+                                          child: SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: AppColors.primaryOrange,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : Icon(
+                                      _getCategoryIcon(category.icon),
+                                      size: 26.0,
+                                      color: AppColors.primaryOrange,
+                                    ),
                             ),
                             const SizedBox(height: AppSpacing.s8),
                             Text(
@@ -281,7 +285,7 @@ class HomeView extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.s12),
             SizedBox(
-              height: 230.0,
+              height: 248.0,
               child: Obx(
                 () => ListView.separated(
                   padding:
@@ -325,7 +329,7 @@ class HomeView extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.s12),
             SizedBox(
-              height: 230.0,
+              height: 248.0,
               child: Obx(
                 () => ListView.separated(
                   padding:
@@ -356,7 +360,7 @@ class HomeView extends StatelessWidget {
 
             const SizedBox(height: AppSpacing.s24),
 
-            // 5. Hot Deals Grid
+            // 5. Hot Deals Grid (2x2)
             _buildSectionHeader(
               title: 'Hot Deals',
               actionTitle: 'See all',
@@ -399,8 +403,240 @@ class HomeView extends StatelessWidget {
                 ),
               ),
             ),
+
+            const SizedBox(height: AppSpacing.s24),
+
+            // 6. Promotional Banners Section
+            _buildPromotionalBannersSection(),
+
+            const SizedBox(height: AppSpacing.s24),
+
+            // 7. Recommended For You Section
+            _buildSectionHeader(
+              title: 'Recommended For You',
+              actionTitle: 'See all',
+              onActionTap: () {
+                Get.toNamed(
+                  AppRoutes.productList,
+                  arguments: 'Recommended For You',
+                );
+              },
+            ),
+            const SizedBox(height: AppSpacing.s12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
+              child: Obx(
+                () => GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: homeController.recommendedProducts.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: AppSpacing.s12,
+                    mainAxisSpacing: AppSpacing.s12,
+                    childAspectRatio: 0.65,
+                  ),
+                  itemBuilder: (context, index) {
+                    final product = homeController.recommendedProducts[index];
+                    return ProductCard(
+                      product: product,
+                      onTap: () {
+                        Get.toNamed(
+                          AppRoutes.productDetail,
+                          arguments: product,
+                        );
+                      },
+                      onAddToCart: () {
+                        cartController.addItem(product);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildAppBarLogo() {
+    return SvgPicture.asset(
+      AppAssets.logo,
+      height: 28.0,
+      fit: BoxFit.contain,
+      alignment: Alignment.centerLeft,
+    );
+  }
+
+  Widget _buildPromotionalBannersSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
+      child: Column(
+        children: [
+          // Banner 1: Free Shipping (Orange Gradient)
+          Container(
+            constraints: const BoxConstraints(minHeight: 100.0),
+            decoration: BoxDecoration(
+              gradient: AppColors.promoOrangeGradient,
+              borderRadius: AppRadius.radiusAll20,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x1AFF6A00),
+                  offset: Offset(0, 4),
+                  blurRadius: 12,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s20,
+              vertical: AppSpacing.s16,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Free Shipping',
+                        style: GoogleFonts.outfit(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.cardWhite,
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        'On all gadget orders over \$50',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xE6FFFFFF),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.s12),
+                GestureDetector(
+                  onTap: () {
+                    Get.snackbar(
+                      'Free Shipping',
+                      'Free shipping coupon applied to your order!',
+                      snackPosition: SnackPosition.TOP,
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.s16,
+                      vertical: AppSpacing.s8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardWhite,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Claim Now',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.navyDark,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: AppSpacing.s12),
+
+          // Banner 2: New Arrivals (Dark Gradient)
+          Container(
+            constraints: const BoxConstraints(minHeight: 100.0),
+            decoration: BoxDecoration(
+              gradient: AppColors.promoDarkGradient,
+              borderRadius: AppRadius.radiusAll20,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x200B1220),
+                  offset: Offset(0, 4),
+                  blurRadius: 12,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s20,
+              vertical: AppSpacing.s16,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'New Arrivals',
+                        style: GoogleFonts.outfit(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.cardWhite,
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        'Explore the latest tech trends & tools',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xE6FFFFFF),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.s12),
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.productList,
+                      arguments: 'New Arrivals',
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.s16,
+                      vertical: AppSpacing.s8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardWhite,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Explore',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.navyDark,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -438,13 +674,17 @@ class HomeView extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 36.0,
-        height: 36.0,
+        width: 38.0,
+        height: 38.0,
         decoration: const BoxDecoration(
           color: AppColors.pageBackground,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 20.0, color: AppColors.navyDark),
+        child: Icon(
+          icon,
+          size: 20.0,
+          color: AppColors.navyDark,
+        ),
       ),
     );
   }
@@ -476,6 +716,8 @@ class HomeView extends StatelessWidget {
         return Icons.router_rounded;
       case 'tablet_mac':
         return Icons.tablet_mac_rounded;
+      case 'phone_android':
+        return Icons.phone_android_rounded;
       default:
         return Icons.devices_other_rounded;
     }
