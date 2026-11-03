@@ -6,6 +6,7 @@ abstract final class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: 'Geist',
       scaffoldBackgroundColor: AppColors.pageBackground,
       primaryColor: AppColors.primaryOrange,
 
@@ -21,20 +22,23 @@ abstract final class AppTheme {
 
       // AppBar global configuration
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.pageBackground,
+        backgroundColor: AppColors.cardWhite,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: AppColors.navyDark),
-        titleTextStyle: AppTextStyles.h2ProductTitle,
+        titleTextStyle: AppTextStyles.h3Section,
       ),
 
       // Text Theme configuration
       textTheme: TextTheme(
         displayLarge: AppTextStyles.h1Display,
         titleLarge: AppTextStyles.h2ProductTitle,
+        titleMedium: AppTextStyles.h3Section,
+        titleSmall: AppTextStyles.outfitTitleSmall,
         bodyLarge: AppTextStyles.uiSemiBold,
         bodyMedium: AppTextStyles.bodyRegular,
+        bodySmall: AppTextStyles.caption,
       ),
     );
   }

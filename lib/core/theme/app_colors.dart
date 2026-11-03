@@ -6,25 +6,42 @@ abstract final class AppColors {
   static const Color darkOrange = Color(0xFFE05A00);    // Button Hover / Active states
   static const Color navyDark = Color(0xFF0B1220);      // Headers / Body base / Splash bg
 
+  // Linear Gradients
+  static const LinearGradient primaryGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [primaryOrange, darkOrange],
+  );
+
+  static const LinearGradient bannerGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [navyDark, primaryOrange],
+  );
+
   // Surface & Backgrounds
   static const Color pageBackground = Color(0xFFF3F5FA); // App-wide scaffold background
   static const Color cardWhite = Color(0xFFFFFFFF);     // Product & item cards
-  static const Color softPeach = Color(0xFFFFF1E8);     // Save / Discount badges
+  static const Color softPeach = Color(0xFFFFF1E8);     // Save / Discount badges & category circle
 
   // Status & Feedback Colors
   static const Color successGreen = Color(0xFF16A34A);  // In-stock states & confirmation
-  static const Color successGreenLight = Color(0xFFDCFCE7); // In-stock badge bg
+  static const Color successGreenLight = Color(0x1416A34A); // rgba(22, 163, 74, 0.08)
   static const Color dangerRed = Color(0xFFE11D48);     // Out of stock / alerts
-  static const Color dangerRedLight = Color(0xFFFFE4E6); // Out of stock badge bg
+  static const Color dangerRedLight = Color(0x14EF4444); // rgba(239, 68, 68, 0.08)
   static const Color amber = Color(0xFFF59E0B);         // Ratings & stars
+  static const Color amberLight = Color(0x14F59E0B);     // rgba(245, 158, 11, 0.08)
 
   // Badge Specific Colors
-  static const Color purple = Color(0xFF9333EA);        // COD tag text
-  static const Color purpleLight = Color(0xFFF3E8FF);   // COD tag bg
+  static const Color purple = Color(0xFF7C3AED);        // COD tag text
+  static const Color purpleLight = Color(0x147C3AED);   // rgba(124, 58, 237, 0.08)
 
   // Neutrals & Borders
-  static const Color textMuted = Color(0xFF64748B);     // Subtitles, metadata, reviews count
-  static const Color textDisabled = Color(0xFF94A3B8);  // Disabled button label
-  static const Color buttonDisabled = Color(0xFFCBD5E1);// Primary disabled button bg
-  static const Color borderLight = Color(0xFFE2E8F0);   // Dividers & card borders
+  static const Color textMuted = Color(0xFF6B7280);     // Subtitles, metadata, reviews count (#6B7280)
+  static const Color textDisabled = Color(0xFF999EA6);  // Disabled button label
+  static const Color buttonDisabled = Color(0xFFD1D5DB);// Primary disabled button bg (#D1D5DB)
+  static const Color borderLight = Color(0xFFE5E7EB);   // Dividers & card borders (#E5E7EB)
+
+  // Shadows
+  static const Color shadow = Color(0x0A0B1220);        // rgba(11, 18, 32, 0.04)
 }
