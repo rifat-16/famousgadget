@@ -12,6 +12,8 @@ class CustomButton extends StatelessWidget {
   final Widget? icon;
   final double? width;
   final double height;
+  final bool hasShadow;
+  final TextStyle? textStyle;
 
   const CustomButton({
     super.key,
@@ -21,6 +23,8 @@ class CustomButton extends StatelessWidget {
     this.icon,
     this.width,
     this.height = 52.0,
+    this.hasShadow = true,
+    this.textStyle,
   });
 
   @override
@@ -45,7 +49,14 @@ class CustomButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.s8)],
-              Text(text, style: AppTextStyles.secondaryOutlineButton),
+              Flexible(
+                child: Text(
+                  text,
+                  style: textStyle ?? AppTextStyles.secondaryOutlineButton,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -67,7 +78,14 @@ class CustomButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.s8)],
-              Text(text, style: AppTextStyles.primaryDisabledButton),
+              Flexible(
+                child: Text(
+                  text,
+                  style: textStyle ?? AppTextStyles.primaryDisabledButton,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -82,13 +100,15 @@ class CustomButton extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: AppColors.primaryGradient,
           borderRadius: BorderRadius.circular(height / 2),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x33FF6A00),
-              offset: Offset(0, 4),
-              blurRadius: 12,
-            ),
-          ],
+          boxShadow: hasShadow
+              ? const [
+                  BoxShadow(
+                    color: Color(0x33FF6A00),
+                    offset: Offset(0, 4),
+                    blurRadius: 12,
+                  ),
+                ]
+              : null,
         ),
         child: ElevatedButton(
           onPressed: onPressed,
@@ -106,7 +126,14 @@ class CustomButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.s8)],
-              Text(text, style: AppTextStyles.primaryActiveButton),
+              Flexible(
+                child: Text(
+                  text,
+                  style: textStyle ?? AppTextStyles.primaryActiveButton,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),

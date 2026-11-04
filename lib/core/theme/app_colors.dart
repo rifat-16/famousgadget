@@ -32,7 +32,7 @@ abstract final class AppColors {
   );
 
   // Surface & Backgrounds
-  static const Color pageBackground = Color(0xFFF3F5FA); // App-wide scaffold background
+  static const Color pageBackground = Color(0xFFF4F5FA); // App-wide scaffold background (soft off-white)
   static const Color cardWhite = Color(0xFFFFFFFF);     // Product & item cards
   static const Color softPeach = Color(0xFFFFF1E8);     // Save / Discount badges & category circle
 
@@ -40,7 +40,7 @@ abstract final class AppColors {
   static const Color successGreen = Color(0xFF16A34A);  // In-stock states & confirmation
   static const Color successGreenLight = Color(0x1416A34A); // rgba(22, 163, 74, 0.08)
   static const Color dangerRed = Color(0xFFE11D48);     // Out of stock / alerts
-  static const Color dangerRedLight = Color(0x14EF4444); // rgba(239, 68, 68, 0.08)
+  static const Color dangerRedLight = Color(0xFFFFECEF); // Soft red/pink for OUT OF STOCK badge
   static const Color amber = Color(0xFFF59E0B);         // Ratings & stars
   static const Color amberLight = Color(0x14F59E0B);     // rgba(245, 158, 11, 0.08)
 

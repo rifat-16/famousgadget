@@ -5,6 +5,7 @@ import '../../controllers/checkout_controller.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/utils/currency_formatter.dart';
 import '../../core/widgets/custom_badge.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../routes/app_routes.dart';
@@ -29,7 +30,7 @@ class CheckoutConfirmView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.navyDark),
           onPressed: () => Get.back(),
         ),
-        title: Text('Confirm Order', style: AppTextStyles.h3Section),
+        title: Text('Order Confirmation', style: AppTextStyles.h3Section),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.s16),
@@ -169,7 +170,7 @@ class CheckoutConfirmView extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '৳${item.totalPrice.toStringAsFixed(0)}',
+                        CurrencyFormatter.format(item.totalPrice),
                         style: AppTextStyles.price(size: 14.0),
                       ),
                     ],
@@ -194,7 +195,7 @@ class CheckoutConfirmView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Subtotal', style: AppTextStyles.caption),
-                      Text('৳${cartController.subtotal.toStringAsFixed(0)}',
+                      Text(CurrencyFormatter.format(cartController.subtotal),
                           style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
                     ],
                   ),
@@ -203,7 +204,7 @@ class CheckoutConfirmView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Delivery Fee (COD)', style: AppTextStyles.caption),
-                      Text('৳${cartController.deliveryFee.toStringAsFixed(0)}',
+                      Text(CurrencyFormatter.format(cartController.deliveryFee),
                           style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
                     ],
                   ),
@@ -214,7 +215,7 @@ class CheckoutConfirmView extends StatelessWidget {
                       children: [
                         Text('Promo Discount',
                             style: AppTextStyles.caption.copyWith(color: AppColors.successGreen)),
-                        Text('-৳${cartController.discount.value.toStringAsFixed(0)}',
+                        Text('-${CurrencyFormatter.format(cartController.discount.value)}',
                             style: AppTextStyles.bodyMedium.copyWith(
                                 color: AppColors.successGreen, fontWeight: FontWeight.w600)),
                       ],
@@ -227,9 +228,9 @@ class CheckoutConfirmView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Total Payable', style: AppTextStyles.h3Section.copyWith(fontSize: 16)),
+                      Text('Total Amount', style: AppTextStyles.h3Section.copyWith(fontSize: 16)),
                       Text(
-                        '৳${cartController.total.toStringAsFixed(0)}',
+                        CurrencyFormatter.format(cartController.total),
                         style: AppTextStyles.price(size: 20.0),
                       ),
                     ],
@@ -242,7 +243,7 @@ class CheckoutConfirmView extends StatelessWidget {
 
             // Confirm Button
             CustomButton(
-              text: 'Confirm Order (Cash on Delivery)',
+              text: 'Place Order',
               onPressed: () {
                 checkoutController.placeOrder(cartController);
                 Get.offNamed(AppRoutes.orderSuccess);

@@ -4,6 +4,8 @@ import '../views/account/addresses_view.dart';
 import '../views/account/orders_view.dart';
 import '../views/account/wishlist_view.dart';
 import '../views/auth/login_view.dart';
+import '../views/auth/otp_view.dart';
+import '../views/auth/register_view.dart';
 import '../views/cart/cart_view.dart';
 import '../views/categories/categories_view.dart';
 import '../views/checkout/checkout_confirm_view.dart';
@@ -11,6 +13,7 @@ import '../views/checkout/checkout_delivery_view.dart';
 import '../views/checkout/order_success_view.dart';
 import '../views/home/home_view.dart';
 import '../views/nav/main_nav_view.dart';
+import '../views/product/all_reviews_view.dart';
 import '../views/product/product_detail_view.dart';
 import '../views/product/product_list_view.dart';
 import '../views/search/search_view.dart';
@@ -84,6 +87,18 @@ abstract class AppPages {
     GetPage(
       name: AppRoutes.login,
       page: () => const LoginView(),
+    ),
+    GetPage(
+      name: AppRoutes.register,
+      page: () => const RegisterView(),
+    ),
+    GetPage(
+      name: AppRoutes.otpVerify,
+      page: () => const OtpView(),
+    ),
+    GetPage(
+      name: AppRoutes.allReviews,
+      page: () => const AllReviewsView(),
     ),
   ];
 }

@@ -6,9 +6,12 @@ import '../../controllers/product_detail_controller.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/utils/currency_formatter.dart';
 import '../../core/widgets/custom_badge.dart';
 import '../../core/widgets/custom_button.dart';
+import '../../data/mock_database.dart';
 import '../../models/product_model.dart';
+import '../../routes/app_routes.dart';
 
 class ProductDetailView extends StatelessWidget {
   const ProductDetailView({super.key});
@@ -17,8 +20,12 @@ class ProductDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProductModel product = Get.arguments as ProductModel;
     final ProductDetailController controller = Get.put(ProductDetailController());
-    final CartController cartController = Get.find<CartController>();
-    final AuthController authController = Get.find<AuthController>();
+    final CartController cartController = Get.isRegistered<CartController>()
+        ? Get.find<CartController>()
+        : Get.put(CartController());
+    final AuthController authController = Get.isRegistered<AuthController>()
+        ? Get.find<AuthController>()
+        : Get.put(AuthController());
 
     controller.init(product);
 
@@ -81,22 +88,21 @@ class ProductDetailView extends StatelessWidget {
                       ),
                       if (product.galleryImages.length > 1)
                         Positioned(
-                          bottom: AppSpacing.s16,
+                          top: AppSpacing.s12,
                           child: Obx(
                             () => Row(
                               mainAxisSize: MainAxisSize.min,
                               children: List.generate(
                                 product.galleryImages.length,
-                                (index) => AnimatedContainer(
-                                  duration: const Duration(milliseconds: 250),
-                                  margin: const EdgeInsets.symmetric(horizontal: 2.0),
-                                  width: controller.currentImageIndex.value == index ? 18.0 : 6.0,
-                                  height: 6.0,
+                                (index) => Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                                  width: 8.0,
+                                  height: 8.0,
                                   decoration: BoxDecoration(
                                     color: controller.currentImageIndex.value == index
                                         ? AppColors.primaryOrange
-                                        : AppColors.borderLight,
-                                    borderRadius: BorderRadius.circular(3),
+                                        : const Color(0xFFE2E8F0),
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
                               ),
@@ -121,11 +127,13 @@ class ProductDetailView extends StatelessWidget {
                             CustomBadge.discount('SAVE ${product.savePercentage}%'),
                             const SizedBox(width: AppSpacing.s8),
                           ],
-                          CustomBadge.inStock(
-                            text: product.inStock ? 'IN STOCK' : 'OUT OF STOCK',
-                          ),
-                          const SizedBox(width: AppSpacing.s8),
-                          CustomBadge.cod(),
+                          if (product.inStock) ...[
+                            CustomBadge.inStock(),
+                            const SizedBox(width: AppSpacing.s8),
+                            CustomBadge.cod(),
+                          ] else ...[
+                            CustomBadge.outOfStock(),
+                          ],
                         ],
                       ),
                       const SizedBox(height: AppSpacing.s12),
@@ -140,34 +148,36 @@ class ProductDetailView extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSpacing.s8),
 
-                      // Rating & Reviews
-                      Row(
-                        children: [
-                          Row(
-                            children: List.generate(
-                              5,
-                              (index) => const Icon(
-                                Icons.star_rounded,
-                                size: 16,
-                                color: AppColors.amber,
+                      // Rating & Reviews (only when reviews exist)
+                      if (product.reviewCount > 0) ...[
+                        Row(
+                          children: [
+                            Row(
+                              children: List.generate(
+                                5,
+                                (index) => const Icon(
+                                  Icons.star_rounded,
+                                  size: 16,
+                                  color: AppColors.amber,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: AppSpacing.s8),
-                          Text(
-                            product.rating.toString(),
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w700,
+                            const SizedBox(width: AppSpacing.s8),
+                            Text(
+                              product.rating.toString(),
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: AppSpacing.s4),
-                          Text(
-                            '(${product.reviewCount} Reviews)',
-                            style: AppTextStyles.caption,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.s16),
+                            const SizedBox(width: AppSpacing.s4),
+                            Text(
+                              '(${product.reviewCount} Reviews)',
+                              style: AppTextStyles.caption,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.s16),
+                      ],
 
                       // Pricing
                       Row(
@@ -176,7 +186,12 @@ class ProductDetailView extends StatelessWidget {
                         children: [
                           Text(
                             product.formattedPrice,
-                            style: AppTextStyles.price(size: 28.0),
+                            style: AppTextStyles.price(
+                              size: 28.0,
+                              color: product.inStock
+                                  ? AppColors.primaryOrange
+                                  : AppColors.navyDark,
+                            ),
                           ),
                           if (product.formattedOldPrice != null) ...[
                             const SizedBox(width: AppSpacing.s12),
@@ -187,6 +202,8 @@ class ProductDetailView extends StatelessWidget {
                           ],
                         ],
                       ),
+                      const SizedBox(height: AppSpacing.s16),
+                      const Divider(color: AppColors.borderLight, height: 1),
                       const SizedBox(height: AppSpacing.s20),
 
                       // Color Selector
@@ -195,7 +212,8 @@ class ProductDetailView extends StatelessWidget {
                         const SizedBox(height: AppSpacing.s8),
                         Obx(
                           () => Wrap(
-                            spacing: AppSpacing.s8,
+                            spacing: AppSpacing.s12,
+                            runSpacing: AppSpacing.s10,
                             children: product.colors.map((color) {
                               final isSelected = controller.selectedColor.value == color;
                               return GestureDetector(
@@ -248,12 +266,28 @@ class ProductDetailView extends StatelessWidget {
                                           : BorderRadius.zero,
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(entry.key, style: AppTextStyles.caption),
-                                    Text(
-                                      entry.value,
-                                      style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                                    ConstrainedBox(
+                                      constraints: const BoxConstraints(maxWidth: 120),
+                                      child: Text(
+                                        entry.key,
+                                        style: AppTextStyles.caption.copyWith(
+                                          color: AppColors.textMuted,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.s12),
+                                    Expanded(
+                                      child: Text(
+                                        entry.value,
+                                        textAlign: TextAlign.end,
+                                        style: AppTextStyles.bodyMedium.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13.0,
+                                          color: AppColors.navyDark,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -264,8 +298,8 @@ class ProductDetailView extends StatelessWidget {
                         const SizedBox(height: AppSpacing.s24),
                       ],
 
-                      // Description
-                      Text('Description', style: AppTextStyles.h3Section.copyWith(fontSize: 15)),
+                      // Overview
+                      Text('Overview', style: AppTextStyles.h3Section.copyWith(fontSize: 15)),
                       const SizedBox(height: AppSpacing.s8),
                       Text(
                         product.description,
@@ -275,52 +309,131 @@ class ProductDetailView extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSpacing.s24),
 
-                      // Customer Reviews Card
-                      Text('Customer Reviews', style: AppTextStyles.h3Section.copyWith(fontSize: 15)),
+                      // Reviews Section (only when reviews exist)
+                      if (product.reviewCount > 0) ...[
+                        Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Reviews', style: AppTextStyles.outfitTitleSmall.copyWith(fontSize: 16, fontWeight: FontWeight.w700)),
+                          Row(
+                            children: [
+                              Row(
+                                children: List.generate(
+                                  5,
+                                  (index) => const Icon(Icons.star_rounded, size: 14, color: AppColors.amber),
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.s6),
+                              Text(
+                                product.rating.toStringAsFixed(1),
+                                style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, fontSize: 13),
+                              ),
+                              const SizedBox(width: AppSpacing.s4),
+                              Text(
+                                '(${product.reviewCount} Reviews)',
+                                style: AppTextStyles.small.copyWith(color: AppColors.textMuted, fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: AppSpacing.s12),
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.s16),
-                        decoration: BoxDecoration(
-                          color: AppColors.cardWhite,
-                          borderRadius: AppRadius.radiusAll16,
-                          border: Border.all(color: AppColors.borderLight),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      // Top 3 Review Cards
+                      ...MockDatabase.productReviews.take(3).map((review) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.s12),
+                          child: Container(
+                            padding: const EdgeInsets.all(AppSpacing.s16),
+                            decoration: BoxDecoration(
+                              color: AppColors.cardWhite,
+                              borderRadius: AppRadius.radiusAll16,
+                              border: Border.all(color: AppColors.borderLight),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Priya Sengupta',
-                                      style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              review.author,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppTextStyles.bodyMedium.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.navyDark,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: AppSpacing.s8),
+                                          Row(
+                                            children: List.generate(
+                                              5,
+                                              (index) => Icon(
+                                                Icons.star_rounded,
+                                                size: 13,
+                                                color: index < review.rating
+                                                    ? AppColors.amber
+                                                    : AppColors.borderLight,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     const SizedBox(width: AppSpacing.s8),
-                                    Row(
-                                      children: List.generate(
-                                        5,
-                                        (index) => const Icon(
-                                          Icons.star_rounded,
-                                          size: 13,
-                                          color: AppColors.amber,
-                                        ),
+                                    Text(
+                                      review.date,
+                                      style: AppTextStyles.small.copyWith(
+                                        color: AppColors.textMuted,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ],
                                 ),
-                                Text('02 Mar 2026', style: AppTextStyles.small),
+                                const SizedBox(height: AppSpacing.s8),
+                                Text(
+                                  review.comment,
+                                  style: AppTextStyles.bodyRegular.copyWith(
+                                    color: AppColors.navyDark,
+                                    height: 1.4,
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ],
                             ),
-                            const SizedBox(height: AppSpacing.s8),
-                            Text(
-                              'Perfect for daily use. The audio clarity and noise cancellation are outstanding! Highly recommended for gadget lovers.',
-                              style: AppTextStyles.bodyMedium.copyWith(height: 1.4),
+                          ),
+                        );
+                      }),
+
+                      // "See All Reviews" Outline Button
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(AppRoutes.allReviews, arguments: product);
+                        },
+                        child: Container(
+                          height: 48.0,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppColors.cardWhite,
+                            borderRadius: AppRadius.radiusAll16,
+                            border: Border.all(color: AppColors.primaryOrange, width: 1.2),
+                          ),
+                          child: Text(
+                            'See All ${product.reviewCount} Reviews',
+                            style: AppTextStyles.secondaryOutlineButton.copyWith(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ],
+                          ),
                         ),
                       ),
+                    ],
                     ],
                   ),
                 ),
@@ -347,67 +460,85 @@ class ProductDetailView extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Row(
-                children: [
-                  // Quantity
-                  Container(
-                    height: 48.0,
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
-                    decoration: BoxDecoration(
-                      color: AppColors.pageBackground,
-                      borderRadius: BorderRadius.circular(AppRadius.r24),
-                    ),
-                    child: Obx(
-                      () => Row(
-                        children: [
-                          GestureDetector(
-                            onTap: controller.decrement,
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4),
-                              child: Text('-', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              child: product.inStock
+                  ? Row(
+                      children: [
+                        // Quantity
+                        Container(
+                          height: 48.0,
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
+                          decoration: BoxDecoration(
+                            color: AppColors.pageBackground,
+                            borderRadius: BorderRadius.circular(AppRadius.r24),
+                          ),
+                          child: Obx(
+                            () => Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: controller.decrement,
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 4),
+                                    child: Text('-', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
+                                  child: Text(
+                                    '${controller.quantity.value}',
+                                    style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: controller.increment,
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 4),
+                                    child: Text('+', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
-                            child: Text(
-                              '${controller.quantity.value}',
-                              style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
-                            ),
+                        ),
+                        const SizedBox(width: AppSpacing.s12),
+
+                        // Add to Cart Button
+                        Expanded(
+                          child: Obx(
+                            () {
+                              final totalCurrentPrice = product.price * controller.quantity.value;
+                              return CustomButton(
+                                text: 'Add to Cart · ${CurrencyFormatter.format(totalCurrentPrice)}',
+                                height: 48.0,
+                                onPressed: () {
+                                  cartController.addItem(
+                                    product,
+                                    color: controller.selectedColor.value,
+                                    quantity: controller.quantity.value,
+                                  );
+                                },
+                              );
+                            },
                           ),
-                          GestureDetector(
-                            onTap: controller.increment,
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4),
-                              child: Text('+', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            ),
-                          ),
-                        ],
+                        ),
+                      ],
+                    )
+                  : Container(
+                      height: 48.0,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFCBD5E1),
+                        borderRadius: BorderRadius.circular(AppRadius.r24),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Out of Stock',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF64748B),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.s12),
-
-                  // Add to Cart Button
-                  Expanded(
-                    child: Obx(
-                      () {
-                        final totalCurrentPrice = product.price * controller.quantity.value;
-                        return CustomButton(
-                          text: 'Add to Cart · ৳${totalCurrentPrice.toStringAsFixed(0)}',
-                          height: 48.0,
-                          onPressed: () {
-                            cartController.addItem(
-                              product,
-                              color: controller.selectedColor.value,
-                              quantity: controller.quantity.value,
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ],

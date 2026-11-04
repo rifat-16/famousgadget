@@ -285,7 +285,7 @@ class HomeView extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.s12),
             SizedBox(
-              height: 248.0,
+              height: 256.0,
               child: Obx(
                 () => ListView.separated(
                   padding:
@@ -329,7 +329,7 @@ class HomeView extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.s12),
             SizedBox(
-              height: 248.0,
+              height: 256.0,
               child: Obx(
                 () => ListView.separated(
                   padding:

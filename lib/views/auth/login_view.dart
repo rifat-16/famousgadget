@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import '../../controllers/auth_controller.dart';
 import '../../core/constants/app_assets.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
@@ -16,120 +16,156 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final _emailController = TextEditingController(text: 'arif@gmail.com');
-  final _passwordController = TextEditingController(text: '123456');
-  bool _obscurePassword = true;
+  final _phoneController = TextEditingController();
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  void _onLogin() {
+    final phone = _phoneController.text.trim().isEmpty
+        ? '+880 1712345678'
+        : _phoneController.text.trim();
+    Get.toNamed(AppRoutes.otpVerify, arguments: {'phone': phone});
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AuthController authController = Get.find<AuthController>();
-
     return Scaffold(
-      backgroundColor: AppColors.pageBackground,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.navyDark),
-          onPressed: () => Get.back(),
-        ),
-      ),
+      backgroundColor: AppColors.navyDark,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.s24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Image.asset(
-                  AppAssets.logo,
-                  height: 48,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.bolt_rounded, size: 48, color: AppColors.primaryOrange),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.s32),
-
-              Text('Welcome Back', style: AppTextStyles.h1Display.copyWith(fontSize: 28)),
-              const SizedBox(height: AppSpacing.s8),
-              Text(
-                'Sign in to access your orders, wishlist, and saved addresses.',
-                style: AppTextStyles.caption.copyWith(fontSize: 14),
-              ),
-              const SizedBox(height: AppSpacing.s32),
-
-              // Email Input
-              Text('Email Address', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: AppSpacing.s8),
-              Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  color: AppColors.cardWhite,
-                  borderRadius: AppRadius.radiusAll12,
-                  border: Border.all(color: AppColors.borderLight),
-                ),
-                child: TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter your email',
-                    border: InputBorder.none,
+        bottom: false,
+        child: Column(
+          children: [
+            // Top Dark Header Section
+            Padding(
+              padding: const EdgeInsets.fromLTRB(AppSpacing.s20, AppSpacing.s20, AppSpacing.s20, AppSpacing.s24),
+              child: Column(
+                children: [
+                  const SizedBox(height: AppSpacing.s8),
+                  // Centered White SVG Logo
+                  SvgPicture.asset(
+                    AppAssets.logoWhite,
+                    height: 28.0,
+                    fit: BoxFit.contain,
                   ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.s16),
-
-              // Password Input
-              Text('Password', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: AppSpacing.s8),
-              Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  color: AppColors.cardWhite,
-                  borderRadius: AppRadius.radiusAll12,
-                  border: Border.all(color: AppColors.borderLight),
-                ),
-                child: TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: 'Enter your password',
-                    border: InputBorder.none,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        size: 20,
-                        color: AppColors.textMuted,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
+                  const SizedBox(height: AppSpacing.s24),
+                  Text(
+                    'Welcome Back',
+                    style: AppTextStyles.h1Display.copyWith(
+                      color: AppColors.cardWhite,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: AppSpacing.s6),
+                  Text(
+                    'Login to unlock premium gadget benefits',
+                    style: AppTextStyles.caption.copyWith(
+                      color: const Color(0xFF94A3B8),
+                      fontSize: 12.5,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.s8),
+                ],
+              ),
+            ),
+
+            // Off-White Rounded Bottom Sheet
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: AppColors.pageBackground,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s24),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: AppSpacing.s4),
+
+                      // Phone Number Field
+                      Text(
+                        'Phone Number',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.navyDark,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.s8),
+                      Container(
+                        height: 52,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: AppColors.cardWhite,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: Center(
+                          child: TextField(
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            style: AppTextStyles.bodyMedium.copyWith(fontSize: 14),
+                            decoration: InputDecoration(
+                              hintText: '+880 1XXXXXXXXX',
+                              hintStyle: AppTextStyles.caption.copyWith(
+                                color: const Color(0xFF94A3B8),
+                                fontSize: 13.5,
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSpacing.s24),
+
+                      // Login Button
+                      CustomButton(
+                        text: 'Login',
+                        height: 48,
+                        onPressed: _onLogin,
+                      ),
+
+                      const SizedBox(height: AppSpacing.s20),
+
+                      // Don't have an account? Register
+                      Center(
+                        child: GestureDetector(
+                          onTap: () => Get.toNamed(AppRoutes.register),
+                          child: Text.rich(
+                            TextSpan(
+                              text: "Don't have an account? ",
+                              style: AppTextStyles.caption.copyWith(
+                                color: const Color(0xFF64748B),
+                                fontSize: 12.5,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: 'Register',
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: AppColors.primaryOrange,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-
-              const SizedBox(height: AppSpacing.s32),
-
-              // Submit Button
-              CustomButton(
-                text: 'Sign In',
-                onPressed: () {
-                  if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
-                    authController.login(_emailController.text, _passwordController.text);
-                    Get.offAllNamed(AppRoutes.mainNav);
-                    Get.snackbar('Welcome', 'Logged in as ${_emailController.text}');
-                  } else {
-                    Get.snackbar('Error', 'Please enter email and password');
-                  }
-                },
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

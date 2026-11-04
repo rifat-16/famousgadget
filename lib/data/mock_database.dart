@@ -1,5 +1,6 @@
 import '../models/category_model.dart';
 import '../models/product_model.dart';
+import '../models/review_model.dart';
 
 class MockDatabase {
   MockDatabase._();
@@ -421,6 +422,27 @@ class MockDatabase {
         'App Support': 'Soundcore App with 22 preset EQs',
       },
     ),
+    ProductModel(
+      id: 'acc_oos_1',
+      title: 'Sony WH-1000XM4 Noise Cancelling (OOS)',
+      description:
+          'The WH-1000XM4 delivers exceptional noise cancellation and smart listening technology that adjusts to your environment automatically.',
+      imageUrl:
+          'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
+      images: [
+        'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
+      ],
+      price: 28500.0,
+      oldPrice: 34000.0,
+      rating: 0.0,
+      reviewCount: 0,
+      category: 'Accessories',
+      inStock: false,
+      savePercentage: 15,
+      colors: [],
+      specifications: {},
+    ),
 
     // ----------------------------------------
     // 5. PROJECTORS
@@ -737,6 +759,7 @@ class MockDatabase {
 
   /// Recommended products
   static List<ProductModel> get recommendedProducts => [
+        products.firstWhere((p) => p.id == 'acc_oos_1'), // Sony WH-1000XM4 (OOS)
         products.firstWhere((p) => p.id == 'ph_1'),  // iPhone 16 Pro Max
         products.firstWhere((p) => p.id == 'cam_3'), // GoPro Hero 12
         products.firstWhere((p) => p.id == 'rou_1'), // TP-Link AX73
@@ -771,4 +794,64 @@ class MockDatabase {
           p.description.toLowerCase().contains(q);
     }).toList();
   }
+
+  /// Authentic gadget customer reviews from design
+  static const List<ReviewModel> productReviews = [
+    ReviewModel(
+      id: 'rev_1',
+      author: 'Aisha Rahman',
+      rating: 5,
+      date: '12 Mar 2026',
+      comment:
+          "These are hands-down the best over-ears I've owned. The sound is incredibly detailed, noise cancellation is almost silent, and they stay comfortable even after a full day of travel.",
+    ),
+    ReviewModel(
+      id: 'rev_2',
+      author: 'Omar Khan',
+      rating: 4,
+      date: '08 Mar 2026',
+      comment:
+          'Great overall, but the case feels a bit larger than I expected and the touch controls can be finicky sometimes. Still, the sound quality and ANC are worth it.',
+    ),
+    ReviewModel(
+      id: 'rev_3',
+      author: 'Priya Sengupta',
+      rating: 5,
+      date: '02 Mar 2026',
+      comment:
+          'Perfect for long flights. The ANC is incredible in loud environments and the battery life easily lasts a full day. Highly recommend for anyone who values silence and clear sound.',
+    ),
+    ReviewModel(
+      id: 'rev_4',
+      author: 'Rafiq Hasan',
+      rating: 5,
+      date: '25 Feb 2026',
+      comment:
+          'Absolutely fantastic sound signature and the battery life easily lasts more than my continuous work shifts. Worth every single taka if you value pure quality.',
+    ),
+    ReviewModel(
+      id: 'rev_5',
+      author: 'Nadia Islam',
+      rating: 5,
+      date: '18 Feb 2026',
+      comment:
+          'Excellent noise cancellation and sound, though they are quite pricey. The premium build feels luxurious, but I suggest getting it during a sale.',
+    ),
+    ReviewModel(
+      id: 'rev_6',
+      author: 'Tanvir Ahmed',
+      rating: 4,
+      date: '10 Feb 2026',
+      comment:
+          'Decent headphones, but I expected a bit more punchy bass out of the box. Midtones and vocals are crystal clear, but bassheads might need to tweak EQ settings extensively.',
+    ),
+    ReviewModel(
+      id: 'rev_7',
+      author: 'Samira Begum',
+      rating: 5,
+      date: '03 Feb 2026',
+      comment:
+          "Best purchase I've made this year. Worth every single taka! Noise cancellation literally blocks out the chaotic city traffic sound completely.",
+    ),
+  ];
 }

@@ -57,6 +57,15 @@ class CartController extends GetxController {
   double get total => (subtotal + deliveryFee - discount.value).clamp(0.0, double.infinity);
 
   void addItem(ProductModel product, {String color = 'Default', int quantity = 1}) {
+    if (!product.inStock) {
+      Get.snackbar(
+        'Out of Stock',
+        'Sorry, ${product.title} is currently out of stock.',
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+
     final index = items.indexWhere(
       (element) => element.product.id == product.id && element.selectedColor == color,
     );

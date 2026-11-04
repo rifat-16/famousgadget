@@ -15,4 +15,7 @@ abstract class AppRoutes {
   static const wishlist = '/wishlist';
   static const addresses = '/addresses';
   static const login = '/login';
+  static const register = '/register';
+  static const otpVerify = '/otp-verify';
+  static const allReviews = '/all-reviews';
 }

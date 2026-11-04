@@ -1,3 +1,5 @@
+import '../core/utils/currency_formatter.dart';
+
 class ProductModel {
   final String id;
   final String title;
@@ -34,7 +36,7 @@ class ProductModel {
   List<String> get galleryImages =>
       images.isNotEmpty ? images : [imageUrl];
 
-  String get formattedPrice => '৳${price.toStringAsFixed(0)}';
+  String get formattedPrice => CurrencyFormatter.format(price);
   String? get formattedOldPrice =>
-      oldPrice != null ? '৳${oldPrice!.toStringAsFixed(0)}' : null;
+      oldPrice != null ? CurrencyFormatter.format(oldPrice!) : null;
 }

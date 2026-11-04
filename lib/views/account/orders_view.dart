@@ -4,6 +4,7 @@ import '../../controllers/checkout_controller.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/utils/currency_formatter.dart';
 
 class OrdersView extends StatelessWidget {
   const OrdersView({super.key});
@@ -84,7 +85,7 @@ class OrdersView extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.s8),
                   Text(
-                    '${order.items.length} items · Total: ৳${order.totalAmount.toStringAsFixed(0)}',
+                    '${order.items.length} items · Total: ${CurrencyFormatter.format(order.totalAmount)}',
                     style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 4),

@@ -46,7 +46,7 @@ class ProductCard extends StatelessWidget {
             Stack(
               children: [
                 Container(
-                  height: 130.0,
+                  height: 122.0,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: AppColors.pageBackground,
@@ -137,17 +137,21 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: onAddToCart,
+                  onTap: product.inStock ? onAddToCart : null,
                   child: Container(
                     padding: const EdgeInsets.all(AppSpacing.s6),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryOrange,
+                      color: product.inStock
+                          ? AppColors.primaryOrange
+                          : AppColors.buttonDisabled,
                       borderRadius: AppRadius.radiusAll8,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.add_rounded,
                       size: 13.0,
-                      color: AppColors.cardWhite,
+                      color: product.inStock
+                          ? AppColors.cardWhite
+                          : AppColors.textDisabled,
                     ),
                   ),
                 ),

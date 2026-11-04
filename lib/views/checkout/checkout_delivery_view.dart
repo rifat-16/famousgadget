@@ -228,9 +228,9 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
 
             const SizedBox(height: AppSpacing.s32),
 
-            // Proceed Button
+            // Continue Button
             CustomButton(
-              text: 'Proceed to Confirm',
+              text: 'Continue to Confirmation',
               onPressed: () {
                 if (checkoutController.selectedAddress.value != null) {
                   Get.toNamed(AppRoutes.checkoutConfirm);

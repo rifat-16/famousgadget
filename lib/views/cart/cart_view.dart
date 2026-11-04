@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/nav_controller.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/utils/currency_formatter.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../routes/app_routes.dart';
 
@@ -13,9 +15,13 @@ class CartView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CartController cartController = Get.find<CartController>();
+    final CartController cartController = Get.isRegistered<CartController>()
+        ? Get.find<CartController>()
+        : Get.put(CartController());
     final TextEditingController promoController = TextEditingController();
-    final NavController navController = Get.find<NavController>();
+    final NavController navController = Get.isRegistered<NavController>()
+        ? Get.find<NavController>()
+        : Get.put(NavController());
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
@@ -32,29 +38,64 @@ class CartView extends StatelessWidget {
       ),
       body: Obx(() {
         if (cartController.items.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.remove_shopping_cart_outlined,
-                  size: 72,
-                  color: AppColors.textDisabled,
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32.0),
+                    Container(
+                      width: 120.0,
+                      height: 120.0,
+                      decoration: const BoxDecoration(
+                        color: AppColors.softPeach,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: SvgPicture.string(
+                        '''<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FF6A00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="9" cy="21" r="1"></circle>
+  <circle cx="20" cy="21" r="1"></circle>
+  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+</svg>''',
+                        width: 48.0,
+                        height: 48.0,
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                    Text(
+                      'Your Cart is Empty',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.h2ProductTitle.copyWith(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      'Looks like you haven\'t added any gadgets yet.\nExplore our latest collection now!',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bodyRegular.copyWith(
+                        fontSize: 13.0,
+                        height: 1.45,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                    CustomButton(
+                      text: 'Start Shopping',
+                      width: 220.0,
+                      height: 52.0,
+                      hasShadow: false,
+                      onPressed: () => navController.changeTab(0),
+                    ),
+                    const SizedBox(height: 120.0),
+                  ],
                 ),
-                const SizedBox(height: AppSpacing.s16),
-                Text('Your Cart is Empty', style: AppTextStyles.h3Section),
-                const SizedBox(height: AppSpacing.s8),
-                Text(
-                  'Looks like you haven\'t added any gadgets yet.',
-                  style: AppTextStyles.caption,
-                ),
-                const SizedBox(height: AppSpacing.s24),
-                CustomButton(
-                  text: 'Browse Products',
-                  width: 200,
-                  onPressed: () => navController.changeTab(0),
-                ),
-              ],
+              ),
             ),
           );
         }
@@ -180,7 +221,7 @@ class CartView extends StatelessWidget {
                                   ),
                                   // Price
                                   Text(
-                                    '৳${cartItem.totalPrice.toStringAsFixed(0)}',
+                                    CurrencyFormatter.format(cartItem.totalPrice),
                                     style: AppTextStyles.price(size: 16.0),
                                   ),
                                 ],
@@ -260,7 +301,7 @@ class CartView extends StatelessWidget {
                       children: [
                         Text('Subtotal', style: AppTextStyles.caption.copyWith(fontSize: 13)),
                         Text(
-                          '৳${cartController.subtotal.toStringAsFixed(0)}',
+                          CurrencyFormatter.format(cartController.subtotal),
                           style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -272,7 +313,7 @@ class CartView extends StatelessWidget {
                         Text('Shipping (Cash on Delivery)',
                             style: AppTextStyles.caption.copyWith(fontSize: 13)),
                         Text(
-                          '৳${cartController.deliveryFee.toStringAsFixed(0)}',
+                          CurrencyFormatter.format(cartController.deliveryFee),
                           style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -288,7 +329,7 @@ class CartView extends StatelessWidget {
                                 color: AppColors.successGreen,
                               )),
                           Text(
-                            '-৳${cartController.discount.value.toStringAsFixed(0)}',
+                            '-${CurrencyFormatter.format(cartController.discount.value)}',
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppColors.successGreen,
@@ -306,7 +347,7 @@ class CartView extends StatelessWidget {
                       children: [
                         Text('Total', style: AppTextStyles.h3Section.copyWith(fontSize: 16)),
                         Text(
-                          '৳${cartController.total.toStringAsFixed(0)}',
+                          CurrencyFormatter.format(cartController.total),
                           style: AppTextStyles.price(size: 20.0),
                         ),
                       ],
