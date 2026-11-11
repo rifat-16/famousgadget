@@ -313,7 +313,7 @@ class CartView extends StatelessWidget {
                         Text('Shipping (Cash on Delivery)',
                             style: AppTextStyles.caption.copyWith(fontSize: 13)),
                         Text(
-                          CurrencyFormatter.format(cartController.deliveryFee),
+                          CurrencyFormatter.format(cartController.deliveryFee.value),
                           style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ],

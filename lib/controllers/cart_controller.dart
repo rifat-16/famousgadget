@@ -6,7 +6,7 @@ class CartController extends GetxController {
   final RxList<CartItemModel> items = <CartItemModel>[].obs;
   final RxString promoCode = ''.obs;
   final RxDouble discount = 0.0.obs;
-  final double deliveryFee = 100.0;
+  final RxDouble deliveryFee = 120.0.obs;
 
   @override
   void onInit() {
@@ -54,7 +54,7 @@ class CartController extends GetxController {
   double get subtotal =>
       items.fold(0.0, (sum, item) => sum + item.totalPrice);
 
-  double get total => (subtotal + deliveryFee - discount.value).clamp(0.0, double.infinity);
+  double get total => (subtotal + deliveryFee.value - discount.value).clamp(0.0, double.infinity);
 
   void addItem(ProductModel product, {String color = 'Default', int quantity = 1}) {
     if (!product.inStock) {

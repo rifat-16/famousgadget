@@ -82,7 +82,7 @@ class CheckoutController extends GetxController {
       orderId: 'FG-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
       items: List.from(cart.items),
       subtotal: cart.subtotal,
-      deliveryFee: cart.deliveryFee,
+      deliveryFee: cart.deliveryFee.value,
       totalAmount: cart.total,
       status: OrderStatus.processing,
       address: selectedAddress.value!,

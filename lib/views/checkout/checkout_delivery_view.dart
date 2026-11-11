@@ -15,17 +15,18 @@ class CheckoutDeliveryView extends StatefulWidget {
 }
 
 class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _streetController = TextEditingController();
+  final _nameController = TextEditingController(text: 'Arif Rahman');
+  final _phoneController = TextEditingController(text: '+880 1712 345678');
+  final _emailController = TextEditingController(text: 'arif@gmail.com');
+  final _streetController = TextEditingController(text: 'House 24, Road 5, Sector 3, Uttara, Dhaka');
   final _cityController = TextEditingController(text: 'Dhaka');
-  final _districtController = TextEditingController(text: 'Uttara');
-  bool _showNewAddressForm = false;
+  String _selectedDistrict = 'Uttara';
 
   @override
   Widget build(BuildContext context) {
-    final CheckoutController checkoutController = Get.put(CheckoutController());
+    final CheckoutController checkoutController = Get.isRegistered<CheckoutController>()
+        ? Get.find<CheckoutController>()
+        : Get.put(CheckoutController());
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
@@ -37,20 +38,36 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.navyDark),
           onPressed: () => Get.back(),
         ),
-        title: Text('Checkout', style: AppTextStyles.h3Section),
+        title: Text(
+          'Checkout',
+          style: AppTextStyles.h2ProductTitle.copyWith(fontSize: 19),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.s16),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.s16,
+          AppSpacing.s12,
+          AppSpacing.s16,
+          AppSpacing.s24,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1. Step Indicator as designed in Figma
             _buildStepIndicator(activeStep: 1),
-            const SizedBox(height: AppSpacing.s24),
+            const SizedBox(height: AppSpacing.s20),
 
             // 2. Deliver To Section
-            Text('Deliver To', style: AppTextStyles.h3Section.copyWith(fontSize: 16)),
-            const SizedBox(height: AppSpacing.s12),
+            Text(
+              'DELIVER TO',
+              style: AppTextStyles.outfitTitleSmall.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+                color: AppColors.navyDark,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s10),
 
             // Saved Addresses
             Obx(
@@ -62,7 +79,7 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
                     onTap: () => checkoutController.selectAddress(address),
                     child: Container(
                       margin: const EdgeInsets.only(bottom: AppSpacing.s12),
-                      padding: const EdgeInsets.all(AppSpacing.s16),
+                      padding: const EdgeInsets.all(AppSpacing.s14),
                       decoration: BoxDecoration(
                         color: AppColors.cardWhite,
                         borderRadius: AppRadius.radiusAll16,
@@ -76,14 +93,32 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            isSelected
-                                ? Icons.radio_button_checked_rounded
-                                : Icons.radio_button_off_rounded,
-                            color: isSelected
-                                ? AppColors.primaryOrange
-                                : AppColors.textDisabled,
-                            size: 20,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Container(
+                              width: 18,
+                              height: 18,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.primaryOrange
+                                      : AppColors.borderLight,
+                                  width: 2,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: isSelected
+                                  ? Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppColors.primaryOrange,
+                                      ),
+                                    )
+                                  : null,
+                            ),
                           ),
                           const SizedBox(width: AppSpacing.s12),
                           Expanded(
@@ -96,13 +131,14 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
                                       '${address.name} (${address.label})',
                                       style: AppTextStyles.bodyMedium.copyWith(
                                         fontWeight: FontWeight.w700,
+                                        color: AppColors.navyDark,
                                       ),
                                     ),
-                                    if (address.isDefault) ...[
-                                      const SizedBox(width: AppSpacing.s8),
+                                    const Spacer(),
+                                    if (address.isDefault)
                                       Container(
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 6,
+                                          horizontal: 8,
                                           vertical: 2,
                                         ),
                                         decoration: BoxDecoration(
@@ -114,17 +150,28 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
                                           style: AppTextStyles.badgeText.copyWith(
                                             color: AppColors.primaryOrange,
                                             fontSize: 9,
+                                            fontWeight: FontWeight.w700,
                                           ),
                                         ),
                                       ),
-                                    ],
                                   ],
                                 ),
-                                const SizedBox(height: AppSpacing.s4),
-                                Text(address.phone, style: AppTextStyles.caption),
-                                const SizedBox(height: AppSpacing.s4),
-                                Text(address.fullAddress,
-                                    style: AppTextStyles.bodyMedium.copyWith(fontSize: 13)),
+                                const SizedBox(height: 3),
+                                Text(
+                                  address.phone,
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: AppColors.textMuted,
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  address.fullAddress,
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    fontSize: 13,
+                                    color: AppColors.navyDark,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -136,125 +183,208 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
               ),
             ),
 
-            // Add New Address Toggle
-            OutlinedButton.icon(
-              onPressed: () {
-                setState(() {
-                  _showNewAddressForm = !_showNewAddressForm;
-                });
+            // Add New Address Button (matching Figma dashed outline)
+            GestureDetector(
+              onTap: () {
+                _nameController.clear();
+                _phoneController.clear();
+                _streetController.clear();
               },
-              icon: Icon(
-                _showNewAddressForm ? Icons.remove_rounded : Icons.add_rounded,
-                color: AppColors.primaryOrange,
-                size: 18,
-              ),
-              label: Text(
-                _showNewAddressForm ? 'Hide Form' : 'Add New Address',
-                style: AppTextStyles.secondaryOutlineButton.copyWith(fontSize: 13),
-              ),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 44),
-                side: const BorderSide(color: AppColors.primaryOrange),
-                shape: RoundedRectangleBorder(
-                  borderRadius: AppRadius.radiusAll12,
-                ),
-              ),
-            ),
-
-            // New Address Form
-            if (_showNewAddressForm) ...[
-              const SizedBox(height: AppSpacing.s20),
-              Text('New Address Details', style: AppTextStyles.h3Section.copyWith(fontSize: 15)),
-              const SizedBox(height: AppSpacing.s12),
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.s16),
+              child: Container(
+                width: double.infinity,
+                height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.cardWhite,
-                  borderRadius: AppRadius.radiusAll16,
-                  border: Border.all(color: AppColors.borderLight),
+                  color: const Color(0x08FF6A00),
+                  borderRadius: AppRadius.radiusAll12,
+                  border: Border.all(
+                    color: AppColors.primaryOrange.withValues(alpha: 0.6),
+                    width: 1.2,
+                  ),
                 ),
-                child: Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildTextField('Full Name', _nameController, 'e.g. Arif Rahman'),
-                    const SizedBox(height: AppSpacing.s12),
-                    _buildTextField('Phone Number', _phoneController, '+880 1XXXXXXXXX'),
-                    const SizedBox(height: AppSpacing.s12),
-                    _buildTextField('Email Address', _emailController, 'arif@gmail.com'),
-                    const SizedBox(height: AppSpacing.s12),
-                    _buildTextField(
-                      'Street Address',
-                      _streetController,
-                      'House/Flat No, Road Name, Area',
+                    const Icon(
+                      Icons.add_rounded,
+                      color: AppColors.primaryOrange,
+                      size: 18,
                     ),
-                    const SizedBox(height: AppSpacing.s12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildTextField('City', _cityController, 'Dhaka'),
-                        ),
-                        const SizedBox(width: AppSpacing.s12),
-                        Expanded(
-                          child: _buildTextField('District/Zone', _districtController, 'Uttara'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.s16),
-                    CustomButton(
-                      text: 'Save & Use Address',
-                      height: 44,
-                      onPressed: () {
-                        if (_nameController.text.isNotEmpty &&
-                            _phoneController.text.isNotEmpty &&
-                            _streetController.text.isNotEmpty) {
-                          checkoutController.addAddress(
-                            name: _nameController.text,
-                            phone: _phoneController.text,
-                            street: _streetController.text,
-                            city: _cityController.text,
-                            district: _districtController.text,
-                          );
-                          setState(() {
-                            _showNewAddressForm = false;
-                          });
-                        } else {
-                          Get.snackbar('Incomplete', 'Please fill in name, phone, and street address.');
-                        }
-                      },
+                    const SizedBox(width: 6),
+                    Text(
+                      'Add New Address',
+                      style: AppTextStyles.outfitTitleSmall.copyWith(
+                        color: AppColors.primaryOrange,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
+            ),
 
-            const SizedBox(height: AppSpacing.s32),
+            const SizedBox(height: AppSpacing.s20),
 
-            // Continue Button
-            CustomButton(
-              text: 'Continue to Confirmation',
-              onPressed: () {
-                if (checkoutController.selectedAddress.value != null) {
-                  Get.toNamed(AppRoutes.checkoutConfirm);
-                } else {
-                  Get.snackbar('Select Address', 'Please select a delivery address to proceed.');
-                }
-              },
+            // 3. New Address Form (as displayed in Figma)
+            Text(
+              'NEW ADDRESS FORM',
+              style: AppTextStyles.outfitTitleSmall.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+                color: AppColors.navyDark,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s10),
+
+            _buildTextField(
+              label: 'Full Name',
+              controller: _nameController,
+              hint: 'Arif Rahman',
+            ),
+            const SizedBox(height: AppSpacing.s12),
+
+            _buildTextField(
+              label: 'Phone Number',
+              controller: _phoneController,
+              hint: '+880 1XXXXXXXXX',
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: AppSpacing.s12),
+
+            _buildTextField(
+              label: 'Email Address',
+              controller: _emailController,
+              hint: 'arif@gmail.com',
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: AppSpacing.s12),
+
+            _buildTextField(
+              label: 'Street Address',
+              controller: _streetController,
+              hint: 'House/Flat No, Road Name, Area',
+            ),
+            const SizedBox(height: AppSpacing.s12),
+
+            Row(
+              children: [
+                Expanded(
+                  child: _buildTextField(
+                    label: 'City',
+                    controller: _cityController,
+                    hint: 'Dhaka',
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.s12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'District/Zone',
+                        style: AppTextStyles.caption.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: AppColors.navyDark,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        height: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: AppColors.cardWhite,
+                          borderRadius: AppRadius.radiusAll12,
+                          border: Border.all(color: AppColors.borderLight),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _selectedDistrict,
+                            isExpanded: true,
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: AppColors.textMuted,
+                              size: 20,
+                            ),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontSize: 13,
+                              color: AppColors.navyDark,
+                            ),
+                            items: const [
+                              DropdownMenuItem(value: 'Uttara', child: Text('Uttara')),
+                              DropdownMenuItem(value: 'Gulshan', child: Text('Gulshan')),
+                              DropdownMenuItem(value: 'Banani', child: Text('Banani')),
+                              DropdownMenuItem(value: 'Dhanmondi', child: Text('Dhanmondi')),
+                              DropdownMenuItem(value: 'Mirpur', child: Text('Mirpur')),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                setState(() {
+                                  _selectedDistrict = val;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.s16),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.s16,
+          AppSpacing.s12,
+          AppSpacing.s16,
+          AppSpacing.s16,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.cardWhite,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              offset: const Offset(0, -4),
+              blurRadius: 10,
             ),
           ],
+        ),
+        child: SafeArea(
+          child: CustomButton(
+            text: 'Continue to Confirmation',
+            height: 52,
+            hasShadow: false,
+            onPressed: () {
+              if (checkoutController.selectedAddress.value != null) {
+                Get.toNamed(AppRoutes.checkoutConfirm);
+              } else {
+                Get.snackbar('Select Address', 'Please select a delivery address to proceed.');
+              }
+            },
+          ),
         ),
       ),
     );
   }
 
   Widget _buildStepIndicator({required int activeStep}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildStepItem(stepNum: '1', title: 'Delivery', isActive: activeStep >= 1),
-        _buildStepLine(isActive: activeStep >= 2),
-        _buildStepItem(stepNum: '2', title: 'Confirm', isActive: activeStep >= 2),
-        _buildStepLine(isActive: activeStep >= 3),
-        _buildStepItem(stepNum: '3', title: 'Done', isActive: activeStep >= 3),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildStepItem(stepNum: '1', title: 'Delivery', isActive: activeStep >= 1),
+          _buildStepLine(isActive: activeStep >= 2),
+          _buildStepItem(stepNum: '2', title: 'Confirm', isActive: activeStep >= 2),
+          _buildStepLine(isActive: activeStep >= 3),
+          _buildStepItem(stepNum: '3', title: 'Done', isActive: activeStep >= 3),
+        ],
+      ),
     );
   }
 
@@ -264,19 +394,20 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
     required bool isActive,
   }) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: 24,
           height: 24,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primaryOrange : AppColors.buttonDisabled,
+            color: isActive ? AppColors.primaryOrange : const Color(0xFFE2E8F0),
             shape: BoxShape.circle,
           ),
           child: Text(
             stepNum,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: isActive ? Colors.white : const Color(0xFF94A3B8),
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
@@ -286,8 +417,9 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
         Text(
           title,
           style: AppTextStyles.caption.copyWith(
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: isActive ? AppColors.navyDark : AppColors.textMuted,
+            fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+            color: isActive ? AppColors.primaryOrange : const Color(0xFF94A3B8),
+            fontSize: 13,
           ),
         ),
       ],
@@ -296,36 +428,55 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
 
   Widget _buildStepLine({required bool isActive}) {
     return Container(
-      width: 28,
-      height: 2,
-      margin: const EdgeInsets.symmetric(horizontal: 6),
-      color: isActive ? AppColors.primaryOrange : AppColors.borderLight,
+      width: 32,
+      height: 1.5,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      color: isActive ? AppColors.primaryOrange : const Color(0xFFE2E8F0),
     );
   }
 
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller,
-    String hint,
-  ) {
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    required String hint,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: AppTextStyles.caption.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+            color: AppColors.navyDark,
+          ),
+        ),
         const SizedBox(height: 6),
         Container(
           height: 44,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: AppColors.pageBackground,
-            borderRadius: AppRadius.radiusAll8,
+            color: AppColors.cardWhite,
+            borderRadius: AppRadius.radiusAll12,
+            border: Border.all(color: AppColors.borderLight),
           ),
           child: TextField(
             controller: controller,
+            keyboardType: keyboardType,
+            style: AppTextStyles.bodyMedium.copyWith(
+              fontSize: 13,
+              color: AppColors.navyDark,
+            ),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: AppTextStyles.caption,
+              hintStyle: AppTextStyles.caption.copyWith(
+                color: AppColors.textMuted,
+                fontSize: 13,
+              ),
               border: InputBorder.none,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
         ),

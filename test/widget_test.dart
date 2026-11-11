@@ -73,4 +73,44 @@ void main() {
     expect(find.textContaining('Explore our latest collection now!'), findsOneWidget);
     expect(find.text('Start Shopping'), findsOneWidget);
   });
+
+  testWidgets('Checkout flow renders per Figma design', (WidgetTester tester) async {
+    await tester.pumpWidget(const FamousGadgetApp());
+    await tester.pumpAndSettle();
+
+    // 1. Delivery View
+    Get.toNamed(AppRoutes.checkoutDelivery);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Checkout'), findsOneWidget);
+    expect(find.text('DELIVER TO'), findsOneWidget);
+    expect(find.textContaining('Arif Rahman'), findsWidgets);
+    expect(find.text('DEFAULT'), findsOneWidget);
+    expect(find.text('Add New Address'), findsOneWidget);
+    expect(find.text('NEW ADDRESS FORM'), findsOneWidget);
+    expect(find.text('Continue to Confirmation'), findsOneWidget);
+
+    // 2. Confirm View
+    Get.toNamed(AppRoutes.checkoutConfirm);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Order Confirmation'), findsOneWidget);
+    expect(find.text('PAYMENT METHOD'), findsOneWidget);
+    expect(find.text('Cash on Delivery (COD)'), findsOneWidget);
+    expect(find.text('SHIPPING METHOD'), findsOneWidget);
+    expect(find.text('Express Delivery (Dhaka Only)'), findsOneWidget);
+    expect(find.text('Order Notes (Optional)'), findsOneWidget);
+    expect(find.text('ORDER ITEMS'), findsOneWidget);
+    expect(find.text('Place Order'), findsOneWidget);
+
+    // 3. Success View
+    Get.toNamed(AppRoutes.orderSuccess);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Order Placed Successfully!'), findsOneWidget);
+    expect(find.text('Order Number'), findsOneWidget);
+    expect(find.text('Processing'), findsOneWidget);
+    expect(find.text('Continue Shopping'), findsOneWidget);
+    expect(find.text('View My Orders'), findsOneWidget);
+  });
 }
