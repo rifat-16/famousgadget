@@ -5,12 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/home_controller.dart';
 import '../../controllers/nav_controller.dart';
+import '../../core/animations/animations.dart';
 import '../../core/constants/app_assets.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/widgets/product_card.dart';
 import '../../routes/app_routes.dart';
+import 'widgets/promo_banner_carousel.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -58,124 +60,11 @@ class HomeView extends StatelessWidget {
           children: [
             const SizedBox(height: AppSpacing.s16),
 
-            // 1. Promo Banner Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
-              child: Container(
-                height: 168.0,
-                decoration: BoxDecoration(
-                  gradient: AppColors.bannerGradient,
-                  borderRadius: AppRadius.radiusAll24,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x200B1220),
-                      offset: Offset(0, 8),
-                      blurRadius: 16,
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(AppSpacing.s20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
-                                  vertical: 4.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.cardWhite,
-                                  borderRadius: AppRadius.radiusAll8,
-                                ),
-                                child: Text(
-                                  'WINTER DEAL',
-                                  style: AppTextStyles.badgeText.copyWith(
-                                    fontSize: 10.0,
-                                    fontWeight: FontWeight.w900,
-                                    color: AppColors.primaryOrange,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.s6),
-                              Text(
-                                'Up to 40% Off Smart Watches',
-                                style: AppTextStyles.outfitTitleSmall.copyWith(
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.cardWhite,
-                                  height: 1.2,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => navController.changeTab(1),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.s16,
-                                    vertical: AppSpacing.s8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryOrange,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    'Shop Now',
-                                    style: AppTextStyles.badgeText.copyWith(
-                                      color: AppColors.cardWhite,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: AppSpacing.s12),
-                              // Dots indicator
-                              Row(
-                                children: [
-                                  _buildDot(isActive: true),
-                                  const SizedBox(width: 4),
-                                  _buildDot(isActive: false),
-                                  const SizedBox(width: 4),
-                                  _buildDot(isActive: false),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.s8),
-                    // Banner Image
-                    ClipRRect(
-                      borderRadius: AppRadius.radiusAll12,
-                      child: Container(
-                        width: 100,
-                        height: 128,
-                        color: Colors.white12,
-                        child: Image.network(
-                          'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=400&auto=format&fit=crop&q=80',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(
-                            Icons.watch_rounded,
-                            size: 48,
-                            color: AppColors.cardWhite,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+            // 1. Promo Banner Section with Animated Carousel
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 100),
+              child: PromoBannerCarousel(
+                onShopNow: () => navController.changeTab(1),
               ),
             ),
 
@@ -188,84 +77,88 @@ class HomeView extends StatelessWidget {
               onActionTap: () => navController.changeTab(1),
             ),
             const SizedBox(height: AppSpacing.s12),
-            SizedBox(
-              height: 94.0,
-              child: Obx(
-                () => ListView.separated(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: homeController.categories.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(width: AppSpacing.s12),
-                  itemBuilder: (context, index) {
-                    final category = homeController.categories[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Get.toNamed(
-                          AppRoutes.productList,
-                          arguments: category.name,
-                        );
-                      },
-                      child: SizedBox(
-                        width: 72.0,
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 56.0,
-                              height: 57.0,
-                              decoration: BoxDecoration(
-                                color: AppColors.softPeach,
-                                borderRadius: BorderRadius.circular(28),
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: category.imageUrl != null
-                                  ? Image.network(
-                                      category.imageUrl!,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) => Icon(
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 200),
+              child: SizedBox(
+                height: 94.0,
+                child: Obx(
+                  () => ListView.separated(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: homeController.categories.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(width: AppSpacing.s12),
+                    itemBuilder: (context, index) {
+                      final category = homeController.categories[index];
+                      return Bounceable(
+                        onTap: () {
+                          Get.toNamed(
+                            AppRoutes.productList,
+                            arguments: category.name,
+                          );
+                        },
+                        scaleFactor: 0.92,
+                        child: SizedBox(
+                          width: 72.0,
+                          child: Column(
+                            children: [
+                              Container(
+                                width: 56.0,
+                                height: 57.0,
+                                decoration: BoxDecoration(
+                                  color: AppColors.softPeach,
+                                  borderRadius: BorderRadius.circular(28),
+                                ),
+                                clipBehavior: Clip.antiAlias,
+                                child: category.imageUrl != null
+                                    ? Image.network(
+                                        category.imageUrl!,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) => Icon(
+                                          _getCategoryIcon(category.icon),
+                                          size: 26.0,
+                                          color: AppColors.primaryOrange,
+                                        ),
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return Center(
+                                            child: SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: AppColors.primaryOrange,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : Icon(
                                         _getCategoryIcon(category.icon),
                                         size: 26.0,
                                         color: AppColors.primaryOrange,
                                       ),
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return Center(
-                                          child: SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: AppColors.primaryOrange,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : Icon(
-                                      _getCategoryIcon(category.icon),
-                                      size: 26.0,
-                                      color: AppColors.primaryOrange,
-                                    ),
-                            ),
-                            const SizedBox(height: AppSpacing.s8),
-                            Text(
-                              category.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.small.copyWith(
-                                color: AppColors.navyDark,
-                                fontWeight: FontWeight.w600,
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: AppSpacing.s8),
+                              Text(
+                                category.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.small.copyWith(
+                                  color: AppColors.navyDark,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -285,7 +178,7 @@ class HomeView extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.s12),
             SizedBox(
-              height: 256.0,
+              height: 224.0,
               child: Obx(
                 () => ListView.separated(
                   padding:
@@ -329,7 +222,7 @@ class HomeView extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.s12),
             SizedBox(
-              height: 256.0,
+              height: 224.0,
               child: Obx(
                 () => ListView.separated(
                   padding:
@@ -383,7 +276,7 @@ class HomeView extends StatelessWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: AppSpacing.s12,
                     mainAxisSpacing: AppSpacing.s12,
-                    childAspectRatio: 0.65,
+                    childAspectRatio: 0.78,
                   ),
                   itemBuilder: (context, index) {
                     final product = homeController.hotDeals[index];
@@ -434,7 +327,7 @@ class HomeView extends StatelessWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: AppSpacing.s12,
                     mainAxisSpacing: AppSpacing.s12,
-                    childAspectRatio: 0.65,
+                    childAspectRatio: 0.78,
                   ),
                   itemBuilder: (context, index) {
                     final product = homeController.recommendedProducts[index];
@@ -652,8 +545,9 @@ class HomeView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title, style: AppTextStyles.h3Section),
-          GestureDetector(
+          Bounceable(
             onTap: onActionTap,
+            scaleFactor: 0.94,
             child: Text(
               actionTitle,
               style: AppTextStyles.uiSemiBold.copyWith(
@@ -671,21 +565,9 @@ class HomeView extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
+    return _CircleActionButton(
+      icon: icon,
       onTap: onTap,
-      child: Container(
-        width: 38.0,
-        height: 38.0,
-        decoration: const BoxDecoration(
-          color: AppColors.pageBackground,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          size: 20.0,
-          color: AppColors.navyDark,
-        ),
-      ),
     );
   }
 
@@ -721,5 +603,51 @@ class HomeView extends StatelessWidget {
       default:
         return Icons.devices_other_rounded;
     }
+  }
+}
+
+class _CircleActionButton extends StatefulWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _CircleActionButton({
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  State<_CircleActionButton> createState() => _CircleActionButtonState();
+}
+
+class _CircleActionButtonState extends State<_CircleActionButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: widget.onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedScale(
+        scale: _isPressed ? 0.90 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOutCubic,
+        child: Container(
+          width: 38.0,
+          height: 38.0,
+          decoration: const BoxDecoration(
+            color: AppColors.pageBackground,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            widget.icon,
+            size: 20.0,
+            color: AppColors.navyDark,
+          ),
+        ),
+      ),
+    );
   }
 }

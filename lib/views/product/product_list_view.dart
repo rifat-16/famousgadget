@@ -67,7 +67,7 @@ class ProductListView extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: AppSpacing.s12,
                 mainAxisSpacing: AppSpacing.s12,
-                childAspectRatio: 0.65,
+                childAspectRatio: 0.78,
               ),
               itemBuilder: (context, index) {
                 final product = filtered[index];

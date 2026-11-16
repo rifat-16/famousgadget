@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../data/mock_database.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 
@@ -19,6 +20,14 @@ class AuthController extends GetxController {
       city: 'Dhaka',
       country: 'BD',
     );
+
+    // Initial 4 Wishlist items matching Figma wishlist frame
+    wishlist.assignAll([
+      MockDatabase.products.firstWhere((p) => p.id == 'acc_1'),
+      MockDatabase.products.firstWhere((p) => p.id == 'acc_4'),
+      MockDatabase.products.firstWhere((p) => p.id == 'sw_3'),
+      MockDatabase.products.firstWhere((p) => p.id == 'cam_1'),
+    ]);
   }
 
   void toggleWishlist(ProductModel product) {
@@ -56,5 +65,22 @@ class AuthController extends GetxController {
 
   void logout() {
     isLoggedIn.value = false;
+  }
+
+  void updateProfile({
+    required String name,
+    required String email,
+    required String phone,
+  }) {
+    if (user.value != null) {
+      user.value = UserModel(
+        id: user.value!.id,
+        name: name,
+        email: email,
+        phone: phone,
+        city: user.value!.city,
+        country: user.value!.country,
+      );
+    }
   }
 }

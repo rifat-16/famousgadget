@@ -18,4 +18,8 @@ abstract class AppRoutes {
   static const register = '/register';
   static const otpVerify = '/otp-verify';
   static const allReviews = '/all-reviews';
+  static const editProfile = '/edit-profile';
+  static const changePassword = '/change-password';
+  static const orderDetail = '/order-detail';
+  static const addAddress = '/add-address';
 }

@@ -15,12 +15,22 @@ class CheckoutDeliveryView extends StatefulWidget {
 }
 
 class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
-  final _nameController = TextEditingController(text: 'Arif Rahman');
-  final _phoneController = TextEditingController(text: '+880 1712 345678');
-  final _emailController = TextEditingController(text: 'arif@gmail.com');
-  final _streetController = TextEditingController(text: 'House 24, Road 5, Sector 3, Uttara, Dhaka');
-  final _cityController = TextEditingController(text: 'Dhaka');
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _streetController = TextEditingController();
+  final _cityController = TextEditingController();
   String _selectedDistrict = 'Uttara';
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _streetController.dispose();
+    _cityController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +198,9 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
               onTap: () {
                 _nameController.clear();
                 _phoneController.clear();
+                _emailController.clear();
                 _streetController.clear();
+                _cityController.clear();
               },
               child: Container(
                 width: double.infinity,
@@ -240,14 +252,14 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
             _buildTextField(
               label: 'Full Name',
               controller: _nameController,
-              hint: 'Arif Rahman',
+              hint: 'Enter full name',
             ),
             const SizedBox(height: AppSpacing.s12),
 
             _buildTextField(
               label: 'Phone Number',
               controller: _phoneController,
-              hint: '+880 1XXXXXXXXX',
+              hint: 'Enter phone number (+880 1XXXXXXXXX)',
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: AppSpacing.s12),
@@ -255,7 +267,7 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
             _buildTextField(
               label: 'Email Address',
               controller: _emailController,
-              hint: 'arif@gmail.com',
+              hint: 'Enter email address (e.g. name@example.com)',
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: AppSpacing.s12),
@@ -273,7 +285,7 @@ class _CheckoutDeliveryViewState extends State<CheckoutDeliveryView> {
                   child: _buildTextField(
                     label: 'City',
                     controller: _cityController,
-                    hint: 'Dhaka',
+                    hint: 'Enter city (e.g. Dhaka)',
                   ),
                 ),
                 const SizedBox(width: AppSpacing.s12),

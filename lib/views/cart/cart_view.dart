@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/nav_controller.dart';
+import '../../core/animations/animations.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -47,22 +48,27 @@ class CartView extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 32.0),
-                    Container(
-                      width: 120.0,
-                      height: 120.0,
-                      decoration: const BoxDecoration(
-                        color: AppColors.softPeach,
-                        shape: BoxShape.circle,
-                      ),
-                      alignment: Alignment.center,
-                      child: SvgPicture.string(
-                        '''<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FF6A00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    PulseGlow(
+                      minScale: 0.95,
+                      maxScale: 1.05,
+                      duration: const Duration(milliseconds: 1600),
+                      child: Container(
+                        width: 120.0,
+                        height: 120.0,
+                        decoration: const BoxDecoration(
+                          color: AppColors.softPeach,
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: SvgPicture.string(
+                          '''<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FF6A00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
   <circle cx="9" cy="21" r="1"></circle>
   <circle cx="20" cy="21" r="1"></circle>
   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
 </svg>''',
-                        width: 48.0,
-                        height: 48.0,
+                          width: 48.0,
+                          height: 48.0,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24.0),
@@ -184,35 +190,51 @@ class CartView extends StatelessWidget {
                                     ),
                                     child: Row(
                                       children: [
-                                        GestureDetector(
+                                        Bounceable(
                                           onTap: () => cartController.decrementQuantity(index),
-                                          child: const Text(
-                                            '-',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.navyDark,
+                                          scaleFactor: 0.85,
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 4),
+                                            child: Text(
+                                              '-',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.navyDark,
+                                              ),
                                             ),
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                                          child: Text(
-                                            '${cartItem.quantity}',
-                                            style: AppTextStyles.small.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.navyDark,
+                                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                                          child: AnimatedSwitcher(
+                                            duration: const Duration(milliseconds: 200),
+                                            transitionBuilder: (child, anim) => ScaleTransition(
+                                              scale: anim,
+                                              child: child,
+                                            ),
+                                            child: Text(
+                                              '${cartItem.quantity}',
+                                              key: ValueKey<int>(cartItem.quantity),
+                                              style: AppTextStyles.small.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.navyDark,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        GestureDetector(
+                                        Bounceable(
                                           onTap: () => cartController.incrementQuantity(index),
-                                          child: const Text(
-                                            '+',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.navyDark,
+                                          scaleFactor: 0.85,
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 4),
+                                            child: Text(
+                                              '+',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.navyDark,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -253,15 +275,16 @@ class CartView extends StatelessWidget {
                         child: TextField(
                           controller: promoController,
                           decoration: InputDecoration(
-                            hintText: 'Enter Promo Code (DEVNIQ)',
+                            hintText: 'Enter promo code (e.g. DEVNIQ)',
                             hintStyle: AppTextStyles.caption.copyWith(fontSize: 13),
                             border: InputBorder.none,
                           ),
                         ),
                       ),
                     ),
-                    GestureDetector(
+                    Bounceable(
                       onTap: () => cartController.applyPromoCode(promoController.text),
+                      scaleFactor: 0.92,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(

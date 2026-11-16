@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../animations/bounceable.dart';
 import '../constants/app_spacing.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
@@ -32,34 +33,45 @@ class CustomButton extends StatelessWidget {
     final bool isDisabled = type == ButtonType.primaryDisabled || onPressed == null;
 
     if (type == ButtonType.secondaryOutline) {
-      return SizedBox(
+      final outlineContent = Container(
         width: width ?? double.infinity,
         height: height,
-        child: OutlinedButton(
-          onPressed: isDisabled ? null : onPressed,
-          style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: AppColors.primaryOrange, width: 1.5),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(height / 2),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          border: Border.all(
+            color: isDisabled ? AppColors.buttonDisabled : AppColors.primaryOrange,
+            width: 1.5,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.s8)],
-              Flexible(
-                child: Text(
-                  text,
-                  style: textStyle ?? AppTextStyles.secondaryOutlineButton,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+          borderRadius: BorderRadius.circular(height / 2),
         ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.s8)],
+            Flexible(
+              child: Text(
+                text,
+                style: textStyle ??
+                    AppTextStyles.secondaryOutlineButton.copyWith(
+                      color: isDisabled ? AppColors.textDisabled : AppColors.primaryOrange,
+                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (isDisabled) {
+        return outlineContent;
+      }
+      return Bounceable(
+        onTap: onPressed,
+        child: outlineContent,
       );
     }
 
@@ -92,52 +104,45 @@ class CustomButton extends StatelessWidget {
       );
     }
 
-    // Active button with primary gradient from Figma tokens
-    return SizedBox(
+    // Active button with primary gradient from Figma tokens & micro-bounce
+    final activeContent = Container(
       width: width ?? double.infinity,
       height: height,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(height / 2),
-          boxShadow: hasShadow
-              ? const [
-                  BoxShadow(
-                    color: Color(0x33FF6A00),
-                    offset: Offset(0, 4),
-                    blurRadius: 12,
-                  ),
-                ]
-              : null,
-        ),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            foregroundColor: AppColors.cardWhite,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(height / 2),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.s8)],
-              Flexible(
-                child: Text(
-                  text,
-                  style: textStyle ?? AppTextStyles.primaryActiveButton,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(height / 2),
+        boxShadow: hasShadow
+            ? const [
+                BoxShadow(
+                  color: Color(0x33FF6A00),
+                  offset: Offset(0, 4),
+                  blurRadius: 12,
                 ),
-              ),
-            ],
-          ),
-        ),
+              ]
+            : null,
       ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[icon!, const SizedBox(width: AppSpacing.s8)],
+          Flexible(
+            child: Text(
+              text,
+              style: textStyle ?? AppTextStyles.primaryActiveButton,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Bounceable(
+      onTap: onPressed,
+      child: activeContent,
     );
   }
 }

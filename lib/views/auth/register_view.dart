@@ -100,7 +100,7 @@ class _RegisterViewState extends State<RegisterView> {
                             child: _buildInputField(
                               label: 'First Name',
                               controller: _firstNameController,
-                              hint: 'Adnan',
+                              hint: 'Enter first name',
                             ),
                           ),
                           const SizedBox(width: AppSpacing.s12),
@@ -108,7 +108,7 @@ class _RegisterViewState extends State<RegisterView> {
                             child: _buildInputField(
                               label: 'Last Name',
                               controller: _lastNameController,
-                              hint: 'Sarker',
+                              hint: 'Enter last name',
                             ),
                           ),
                         ],
@@ -119,7 +119,7 @@ class _RegisterViewState extends State<RegisterView> {
                       _buildInputField(
                         label: 'Phone Number',
                         controller: _phoneController,
-                        hint: '+880  1712345678',
+                        hint: '+880 1XXXXXXXXX',
                         keyboardType: TextInputType.phone,
                       ),
                       const SizedBox(height: AppSpacing.s14),
@@ -128,7 +128,7 @@ class _RegisterViewState extends State<RegisterView> {
                       _buildInputField(
                         label: 'Email Address',
                         controller: _emailController,
-                        hint: 'example@gmail.com',
+                        hint: 'Enter email address',
                         keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: AppSpacing.s14),
@@ -157,7 +157,7 @@ class _RegisterViewState extends State<RegisterView> {
                             obscureText: true,
                             style: AppTextStyles.bodyMedium.copyWith(fontSize: 14),
                             decoration: InputDecoration(
-                              hintText: '••••••••••••',
+                              hintText: 'Enter password (min. 8 characters)',
                               hintStyle: AppTextStyles.caption.copyWith(
                                 color: const Color(0xFF94A3B8),
                                 fontSize: 13.5,

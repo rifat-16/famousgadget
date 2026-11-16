@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/home_controller.dart';
+import '../../core/animations/animations.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -11,7 +12,9 @@ class CategoriesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.find<HomeController>();
+    final HomeController homeController = Get.isRegistered<HomeController>()
+        ? Get.find<HomeController>()
+        : Get.put(HomeController());
 
     return Scaffold(
       backgroundColor: AppColors.pageBackground,
@@ -19,7 +22,10 @@ class CategoriesView extends StatelessWidget {
         backgroundColor: AppColors.cardWhite,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text('Categories', style: AppTextStyles.h2ProductTitle),
+        title: Text(
+          'Categories',
+          style: AppTextStyles.h2ProductTitle.copyWith(fontSize: 20),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search_rounded, color: AppColors.navyDark),
@@ -31,128 +37,109 @@ class CategoriesView extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.s16,
-          AppSpacing.s16,
+          AppSpacing.s12,
           AppSpacing.s16,
           120.0,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(
-              () => GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: homeController.categories.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: AppSpacing.s12,
-                  mainAxisSpacing: AppSpacing.s12,
-                  childAspectRatio: 0.90,
-                ),
-                itemBuilder: (context, index) {
-                  final category = homeController.categories[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Get.toNamed(
-                        AppRoutes.productList,
-                        arguments: category.name,
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.cardWhite,
-                        borderRadius: AppRadius.radiusAll20,
-                        border: Border.all(
-                          color: AppColors.borderLight.withValues(alpha: 0.5),
+        child: Obx(
+          () => GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: homeController.categories.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: AppSpacing.s12,
+              mainAxisSpacing: AppSpacing.s12,
+              childAspectRatio: 0.77,
+            ),
+            itemBuilder: (context, index) {
+              final category = homeController.categories[index];
+              return FadeSlideIn(
+                delay: Duration(milliseconds: (index * 35).clamp(0, 350)),
+                distance: 16.0,
+                child: Bounceable(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.productList,
+                      arguments: category.name,
+                    );
+                  },
+                  scaleFactor: 0.92,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cardWhite,
+                      borderRadius: AppRadius.radiusAll16,
+                      border: Border.all(
+                        color: AppColors.borderLight.withValues(alpha: 0.6),
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x080B1220),
+                          offset: Offset(0, 2),
+                          blurRadius: 6,
                         ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x0A0B1220),
-                            offset: Offset(0, 4),
-                            blurRadius: 8,
+                      ],
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 8.0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: const BoxDecoration(
+                            color: AppColors.softPeach,
+                            shape: BoxShape.circle,
                           ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.s12,
-                        vertical: AppSpacing.s14,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 60.0,
-                            height: 60.0,
-                            decoration: BoxDecoration(
-                              color: AppColors.softPeach,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: category.imageUrl != null
-                                ? Image.network(
-                                    category.imageUrl!,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        Icon(
-                                      _getCategoryIcon(category.icon),
-                                      size: 30.0,
-                                      color: AppColors.primaryOrange,
-                                    ),
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: AppColors.primaryOrange,
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Icon(
+                          clipBehavior: Clip.antiAlias,
+                          child: category.imageUrl != null
+                              ? Image.network(
+                                  category.imageUrl!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Icon(
                                     _getCategoryIcon(category.icon),
-                                    size: 30.0,
+                                    size: 20.0,
                                     color: AppColors.primaryOrange,
                                   ),
+                                )
+                              : Icon(
+                                  _getCategoryIcon(category.icon),
+                                  size: 20.0,
+                                  color: AppColors.primaryOrange,
+                                ),
+                        ),
+                        const SizedBox(height: 6.0),
+                        Text(
+                          category.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.outfitTitleSmall.copyWith(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.navyDark,
                           ),
-                          const SizedBox(height: AppSpacing.s8),
-                          Text(
-                            category.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.outfitTitleSmall.copyWith(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w700,
-                            ),
+                        ),
+                        const SizedBox(height: 2.0),
+                        Text(
+                          '${category.itemCount} items',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.small.copyWith(
+                            fontSize: 10.0,
+                            color: AppColors.textMuted,
                           ),
-                          const SizedBox(height: AppSpacing.s2),
-                          Text(
-                            '${category.itemCount} items',
-                            style: AppTextStyles.small.copyWith(
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
-            ),
-          ],
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

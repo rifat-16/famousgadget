@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/nav_controller.dart';
+import '../../core/animations/animations.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -112,12 +113,12 @@ class MainNavigationView extends StatelessWidget {
   }) {
     final bool isSelected = index == selectedIndex;
 
-    return GestureDetector(
+    return Bounceable(
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
+      scaleFactor: 0.92,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
+        curve: Curves.easeOutCubic,
         height: 44.0,
         padding: EdgeInsets.symmetric(
           horizontal: isSelected ? AppSpacing.s16 : AppSpacing.s12,
@@ -133,29 +134,39 @@ class MainNavigationView extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                Icon(
-                  isSelected ? activeIcon : icon,
-                  size: 20.0,
-                  color: isSelected ? AppColors.cardWhite : AppColors.textMuted,
+                AnimatedScale(
+                  scale: isSelected ? 1.12 : 1.0,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOutBack,
+                  child: Icon(
+                    isSelected ? activeIcon : icon,
+                    size: 20.0,
+                    color: isSelected ? AppColors.cardWhite : AppColors.textMuted,
+                  ),
                 ),
                 if (badgeCount > 0 && !isSelected)
                   Positioned(
                     right: -6,
                     top: -6,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryOrange,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '$badgeCount',
-                        style: const TextStyle(
-                          color: AppColors.cardWhite,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+                      child: Container(
+                        key: ValueKey<int>(badgeCount),
+                        width: 16,
+                        height: 16,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primaryOrange,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          '$badgeCount',
+                          style: const TextStyle(
+                            color: AppColors.cardWhite,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -164,12 +175,16 @@ class MainNavigationView extends StatelessWidget {
             ),
             if (isSelected) ...[
               const SizedBox(width: AppSpacing.s8),
-              Text(
-                label,
-                style: AppTextStyles.outfitTitleSmall.copyWith(
-                  color: AppColors.cardWhite,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w600,
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: 1.0,
+                child: Text(
+                  label,
+                  style: AppTextStyles.outfitTitleSmall.copyWith(
+                    color: AppColors.cardWhite,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],

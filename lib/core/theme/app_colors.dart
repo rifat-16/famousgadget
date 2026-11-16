@@ -39,7 +39,7 @@ abstract final class AppColors {
   // Status & Feedback Colors
   static const Color successGreen = Color(0xFF16A34A);  // In-stock states & confirmation
   static const Color successGreenLight = Color(0x1416A34A); // rgba(22, 163, 74, 0.08)
-  static const Color dangerRed = Color(0xFFE11D48);     // Out of stock / alerts
+  static const Color dangerRed = Color(0xFFEF4444);     // Out of stock / alerts (True vibrant red)
   static const Color dangerRedLight = Color(0xFFFFECEF); // Soft red/pink for OUT OF STOCK badge
   static const Color amber = Color(0xFFF59E0B);         // Ratings & stars
   static const Color amberLight = Color(0x14F59E0B);     // rgba(245, 158, 11, 0.08)

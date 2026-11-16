@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/product_detail_controller.dart';
+import '../../core/animations/animations.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -44,16 +45,16 @@ class ProductDetailView extends StatelessWidget {
           Obx(
             () {
               final isFav = authController.isInWishlist(product.id);
-              return IconButton(
-                icon: Icon(
-                  isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                  color: isFav ? AppColors.dangerRed : AppColors.navyDark,
+              return Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.s12),
+                child: HeartPopButton(
+                  isFavorite: isFav,
+                  onToggle: () => authController.toggleWishlist(product),
+                  size: 24.0,
                 ),
-                onPressed: () => authController.toggleWishlist(product),
               );
             },
           ),
-          const SizedBox(width: AppSpacing.s8),
         ],
       ),
       body: Stack(
@@ -75,7 +76,7 @@ class ProductDetailView extends StatelessWidget {
                         itemCount: product.galleryImages.length,
                         onPageChanged: controller.setImageIndex,
                         itemBuilder: (context, index) {
-                          return Padding(
+                          final imgWidget = Padding(
                             padding: const EdgeInsets.all(AppSpacing.s16),
                             child: Image.network(
                               product.galleryImages[index],
@@ -84,6 +85,13 @@ class ProductDetailView extends StatelessWidget {
                                   const Icon(Icons.devices, size: 80, color: AppColors.textMuted),
                             ),
                           );
+                          if (index == 0) {
+                            return Hero(
+                              tag: 'product-img-${product.id}',
+                              child: imgWidget,
+                            );
+                          }
+                          return imgWidget;
                         },
                       ),
                       if (product.galleryImages.length > 1)
@@ -94,17 +102,22 @@ class ProductDetailView extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: List.generate(
                                 product.galleryImages.length,
-                                (index) => Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 3.0),
-                                  width: 8.0,
-                                  height: 8.0,
-                                  decoration: BoxDecoration(
-                                    color: controller.currentImageIndex.value == index
-                                        ? AppColors.primaryOrange
-                                        : const Color(0xFFE2E8F0),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
+                                (index) {
+                                  final isActive = controller.currentImageIndex.value == index;
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 250),
+                                    curve: Curves.easeOutCubic,
+                                    margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                                    width: isActive ? 20.0 : 7.0,
+                                    height: 7.0,
+                                    decoration: BoxDecoration(
+                                      color: isActive
+                                          ? AppColors.primaryOrange
+                                          : const Color(0xFFE2E8F0),
+                                      borderRadius: BorderRadius.circular(3.5),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -216,15 +229,18 @@ class ProductDetailView extends StatelessWidget {
                             runSpacing: AppSpacing.s10,
                             children: product.colors.map((color) {
                               final isSelected = controller.selectedColor.value == color;
-                              return GestureDetector(
+                              return Bounceable(
                                 onTap: () => controller.setColor(color),
-                                child: Container(
+                                scaleFactor: 0.94,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
                                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                   decoration: BoxDecoration(
                                     color: isSelected ? AppColors.softPeach : AppColors.pageBackground,
                                     borderRadius: BorderRadius.circular(AppRadius.r16),
                                     border: Border.all(
                                       color: isSelected ? AppColors.primaryOrange : Colors.transparent,
+                                      width: 1.5,
                                     ),
                                   ),
                                   child: Text(
@@ -474,25 +490,35 @@ class ProductDetailView extends StatelessWidget {
                           child: Obx(
                             () => Row(
                               children: [
-                                GestureDetector(
+                                Bounceable(
                                   onTap: controller.decrement,
+                                  scaleFactor: 0.85,
                                   child: const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 4),
-                                    child: Text('-', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                    child: Text('-', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.navyDark)),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
-                                  child: Text(
-                                    '${controller.quantity.value}',
-                                    style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 200),
+                                    transitionBuilder: (child, animation) => ScaleTransition(
+                                      scale: animation,
+                                      child: child,
+                                    ),
+                                    child: Text(
+                                      '${controller.quantity.value}',
+                                      key: ValueKey<int>(controller.quantity.value),
+                                      style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
-                                GestureDetector(
+                                Bounceable(
                                   onTap: controller.increment,
+                                  scaleFactor: 0.85,
                                   child: const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 4),
-                                    child: Text('+', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                    child: Text('+', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.navyDark)),
                                   ),
                                 ),
                               ],

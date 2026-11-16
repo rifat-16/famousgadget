@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../core/animations/animations.dart';
 import '../../core/constants/app_assets.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
@@ -39,37 +40,39 @@ class _LoginViewState extends State<LoginView> {
         bottom: false,
         child: Column(
           children: [
-            // Top Dark Header Section
-            Padding(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.s20, AppSpacing.s20, AppSpacing.s20, AppSpacing.s24),
-              child: Column(
-                children: [
-                  const SizedBox(height: AppSpacing.s8),
-                  // Centered White SVG Logo
-                  SvgPicture.asset(
-                    AppAssets.logoWhite,
-                    height: 28.0,
-                    fit: BoxFit.contain,
-                  ),
-                  const SizedBox(height: AppSpacing.s24),
-                  Text(
-                    'Welcome Back',
-                    style: AppTextStyles.h1Display.copyWith(
-                      color: AppColors.cardWhite,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+            // Top Dark Header Section with smooth entrance
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 100),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(AppSpacing.s20, AppSpacing.s20, AppSpacing.s20, AppSpacing.s24),
+                child: Column(
+                  children: [
+                    const SizedBox(height: AppSpacing.s8),
+                    SvgPicture.asset(
+                      AppAssets.logoWhite,
+                      height: 28.0,
+                      fit: BoxFit.contain,
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.s6),
-                  Text(
-                    'Login to unlock premium gadget benefits',
-                    style: AppTextStyles.caption.copyWith(
-                      color: const Color(0xFF94A3B8),
-                      fontSize: 12.5,
+                    const SizedBox(height: AppSpacing.s24),
+                    Text(
+                      'Welcome Back',
+                      style: AppTextStyles.h1Display.copyWith(
+                        color: AppColors.cardWhite,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.s8),
-                ],
+                    const SizedBox(height: AppSpacing.s6),
+                    Text(
+                      'Login to unlock premium gadget benefits',
+                      style: AppTextStyles.caption.copyWith(
+                        color: const Color(0xFF94A3B8),
+                        fontSize: 12.5,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.s8),
+                  ],
+                ),
               ),
             ),
 
@@ -83,84 +86,110 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s24),
                 child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: AppSpacing.s4),
+                  child: FadeSlideIn(
+                    delay: const Duration(milliseconds: 250),
+                    distance: 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: AppSpacing.s4),
 
-                      // Phone Number Field
-                      Text(
-                        'Phone Number',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.navyDark,
-                          fontSize: 13,
+                        // Phone Number Field
+                        Text(
+                          'Phone Number',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.navyDark,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.s8),
-                      Container(
-                        height: 52,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: AppColors.cardWhite,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                        ),
-                        child: Center(
-                          child: TextField(
-                            controller: _phoneController,
-                            keyboardType: TextInputType.phone,
-                            style: AppTextStyles.bodyMedium.copyWith(fontSize: 14),
-                            decoration: InputDecoration(
-                              hintText: '+880 1XXXXXXXXX',
-                              hintStyle: AppTextStyles.caption.copyWith(
-                                color: const Color(0xFF94A3B8),
-                                fontSize: 13.5,
+                        const SizedBox(height: AppSpacing.s8),
+                        Container(
+                          height: 52,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardWhite,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                          ),
+                          child: Center(
+                            child: TextField(
+                              controller: _phoneController,
+                              keyboardType: TextInputType.phone,
+                              style: AppTextStyles.bodyMedium.copyWith(fontSize: 14),
+                              decoration: InputDecoration(
+                                hintText: '+880 1XXXXXXXXX',
+                                hintStyle: AppTextStyles.caption.copyWith(
+                                  color: const Color(0xFF94A3B8),
+                                  fontSize: 13.5,
+                                ),
+                                border: InputBorder.none,
                               ),
-                              border: InputBorder.none,
-                              isDense: true,
                             ),
                           ),
                         ),
-                      ),
 
-                      const SizedBox(height: AppSpacing.s24),
+                        const SizedBox(height: AppSpacing.s20),
 
-                      // Login Button
-                      CustomButton(
-                        text: 'Login',
-                        height: 48,
-                        onPressed: _onLogin,
-                      ),
+                        // Send OTP Button
+                        CustomButton(
+                          text: 'Send OTP',
+                          height: 50,
+                          onPressed: _onLogin,
+                        ),
 
-                      const SizedBox(height: AppSpacing.s20),
+                        const SizedBox(height: AppSpacing.s16),
 
-                      // Don't have an account? Register
-                      Center(
-                        child: GestureDetector(
-                          onTap: () => Get.toNamed(AppRoutes.register),
-                          child: Text.rich(
-                            TextSpan(
-                              text: "Don't have an account? ",
-                              style: AppTextStyles.caption.copyWith(
-                                color: const Color(0xFF64748B),
-                                fontSize: 12.5,
+                        // Continue as Guest Option
+                        Center(
+                          child: Bounceable(
+                            onTap: () => Get.offAllNamed(AppRoutes.mainNav),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                              child: Text(
+                                'Continue as Guest',
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.primaryOrange,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
                               ),
-                              children: [
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: AppSpacing.s20),
+
+                        // Register Link
+                        Center(
+                          child: Bounceable(
+                            onTap: () => Get.toNamed(AppRoutes.register),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                              child: Text.rich(
                                 TextSpan(
-                                  text: 'Register',
+                                  text: "Don't have an account? ",
                                   style: AppTextStyles.caption.copyWith(
-                                    color: AppColors.primaryOrange,
-                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF64748B),
                                     fontSize: 12.5,
                                   ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'Register',
+                                      style: AppTextStyles.caption.copyWith(
+                                        color: AppColors.primaryOrange,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.5,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

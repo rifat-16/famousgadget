@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/product_model.dart';
+import '../animations/bounceable.dart';
 import '../constants/app_spacing.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
@@ -10,6 +11,8 @@ class ProductCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onAddToCart;
   final double? width;
+  final double? height;
+  final String? heroTag;
 
   const ProductCard({
     super.key,
@@ -17,14 +20,20 @@ class ProductCard extends StatelessWidget {
     this.onTap,
     this.onAddToCart,
     this.width,
+    this.height,
+    this.heroTag,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final effectiveHeroTag = heroTag ?? 'product-img-${product.id}';
+
+    return Bounceable(
       onTap: onTap,
+      scaleFactor: 0.97,
       child: Container(
         width: width,
+        height: height,
         decoration: BoxDecoration(
           color: AppColors.cardWhite,
           borderRadius: AppRadius.radiusAll20,
@@ -37,45 +46,49 @@ class ProductCard extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(AppSpacing.s8),
+        padding: const EdgeInsets.all(AppSpacing.s10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
-            // Image Container
-            Stack(
-              children: [
-                Container(
-                  height: 122.0,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.pageBackground,
-                    borderRadius: BorderRadius.circular(AppRadius.r12),
+            // Image Container (expands to fill top area nicely) with Hero
+            Expanded(
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.pageBackground,
+                      borderRadius: BorderRadius.circular(AppRadius.r12),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Hero(
+                      tag: effectiveHeroTag,
+                      child: Image.network(
+                        product.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Icon(
+                              Icons.devices_other_rounded,
+                              size: 32,
+                              color: AppColors.primaryOrange.withValues(alpha: 0.4),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Icon(
-                          Icons.devices_other_rounded,
-                          size: 32,
-                          color: AppColors.primaryOrange.withValues(alpha: 0.4),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                if (product.savePercentage != null)
-                  Positioned(
-                    top: 4,
-                    left: 4,
-                    child: CustomBadge.discount('SAVE ${product.savePercentage}%'),
-                  ),
-              ],
+                  if (product.savePercentage != null)
+                    Positioned(
+                      top: 6,
+                      left: 6,
+                      child: CustomBadge.discount('SAVE ${product.savePercentage}%'),
+                    ),
+                ],
+              ),
             ),
-            const SizedBox(height: AppSpacing.s6),
+            const SizedBox(height: AppSpacing.s8),
 
             // Product Title
             Text(
@@ -88,7 +101,7 @@ class ProductCard extends StatelessWidget {
                 fontSize: 13.0,
               ),
             ),
-            const SizedBox(height: AppSpacing.s4),
+            const SizedBox(height: 3.0),
 
             // Rating Row
             Row(
@@ -113,7 +126,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.s4),
+            const SizedBox(height: 4.0),
 
             // Price & Add to Cart button
             Row(
@@ -136,8 +149,9 @@ class ProductCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                GestureDetector(
+                Bounceable(
                   onTap: product.inStock ? onAddToCart : null,
+                  scaleFactor: 0.85,
                   child: Container(
                     padding: const EdgeInsets.all(AppSpacing.s6),
                     decoration: BoxDecoration(
